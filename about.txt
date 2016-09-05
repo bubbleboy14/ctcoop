@@ -1,0 +1,1 @@
+This package provides organizational management tools (in the form of web pages and components) for a cooperative.
