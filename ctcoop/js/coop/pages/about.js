@@ -8,10 +8,10 @@ CT.onload(function() {
 	user.core.all(function(users) {
 		var slider, content = [ CT.dom.node(cfg.header, "div", "biggest pv10") ];
 		if (cfg.slider) {
-			slider = CT.dom.node(null, "div", "abs ctr top50 w2-3 h250p");
+			slider = CT.dom.node(null, "div", "abs ctl top50 w3-10 h250p");
 			content = content.concat([
-				slider,
-				CT.dom.node(cfg.blurb, "div", "w3-10 h250p justified scrolly")
+				CT.dom.node(cfg.blurb, "div", "w2-3 h250p justified scrolly", "aboutblurb"),
+				slider
 			]);
 		} else
 			content.push(cfg.blurb);
