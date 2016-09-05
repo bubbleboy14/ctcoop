@@ -7,4 +7,7 @@ syms = {
 	"css": ["coop.css"],
 	"html": ["coop"]
 }
+model = {
+	"ctcoop.model": ["*"]
+}
 requires = ["ctdecide"]
