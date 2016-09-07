@@ -31,7 +31,8 @@ CT.onload(function() {
 			(new CT.slider.Slider({
 				parent: slider,
 				frames: cfg.slider,
-				navButtons: false
+				navButtons: false,
+				circular: true
 			})).show();
 		}
 	}, cfg.members.model, cfg.members.filters);
