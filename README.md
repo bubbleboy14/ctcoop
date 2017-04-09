@@ -3,21 +3,36 @@ This package provides organizational management tools (in the form of web pages 
 
 # Back (Init Config)
 
-copies = {
-	"css": ["custom.css"]
-}
-
-syms = {
-	"js": ["coop"],
-	"css": ["coop.css"],
-	"html": ["coop"]
-}
-requires = ["ctdecide"]
+    copies = {
+    	"css": ["custom.css"]
+    }
+    
+    syms = {
+    	"js": ["coop"],
+    	"css": ["coop.css"],
+    	"html": ["coop"]
+    }
+    model = {
+    	"ctcoop.model": ["*"]
+    }
+    requires = ["ctdecide"]
 
 # Front (JS Config)
 
 ## core.config.ctcoop
 ### Import line: 'CT.require("core.config");'
-{
-	"about": "lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah"
-}
+    {
+    	"about": {
+    		"members": {
+    			"header": "Members",
+    			"model": "member",
+    			"filters": {}
+    		},
+    		"header": "Welcome",
+    		"blurb": "lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah lorem ipsum blah blah blah"
+    	},
+    	"members": {
+    		"model": "member",
+    		"filters": {}
+    	}
+    }
