@@ -10,4 +10,4 @@ syms = {
 model = {
 	"ctcoop.model": ["*"]
 }
-requires = ["ctdecide", "ctedit"]
+requires = ["ctdecide"]
