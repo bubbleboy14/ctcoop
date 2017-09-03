@@ -1,6 +1,7 @@
 CT.require("CT.all");
 CT.require("core");
 CT.require("user.core");
+CT.require("edit.core");
 
 CT.onload(function() {
 	var cfg = core.config.ctcoop.about;
@@ -35,5 +36,6 @@ CT.onload(function() {
 				circular: true
 			})).show();
 		}
+		edit.core.override();
 	}, cfg.members.model, cfg.members.filters);
 });
