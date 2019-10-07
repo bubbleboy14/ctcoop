@@ -14,7 +14,7 @@ coop.cal = {
 
 coop.cal.Cal = CT.Class({
 	CLASSNAME: "coop.cal.Cal",
-	once: function(node, cal, day, date, month, year) {
+	once: function(date, month, year) {
 		var tslot = this.timeslot;
 		this.task(function(task) {
 			tslot(task, "once", new Date(year, month, date));
