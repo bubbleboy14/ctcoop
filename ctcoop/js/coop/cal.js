@@ -33,11 +33,8 @@ coop.cal.Cal = CT.Class({
 			tslot(task, "daily");
 		});
 	},
-	reload: function() {
-		// TODO: reload everything!
-	},
 	timeslot: function(task, schedule, when) {
-		var hours, minutes, reload = this.reload;
+		var hours, minutes, cal = this.cal;
 		CT.modal.prompt({
 			prompt: "what time does it start?",
 			style: "time",
@@ -56,11 +53,16 @@ coop.cal.Cal = CT.Class({
 							duration: duration,
 							schedule: schedule
 						}, function(slot) {
-							task.timeslots.push(slot.key);
+							task.timeslots.push(slot);
 							coop.cal.edit({
 								key: task.key,
-								timeslots: task.timeslots
-							}, reload);
+								timeslots: task.timeslots.map(function(ts) {
+									return ts.key;
+								})
+							}, function() {
+								cal.appointment(task);
+								cal.orient();
+							});
 						});
 					}
 				});
