@@ -21,10 +21,11 @@ coop.cal.Cal = CT.Class({
 		});
 	},
 	weekly: function(day, dayindex) {
-		CT.modal.modal([
-			day,
-			"[add stuff here...]"
-		]);
+		var tslot = this.timeslot, d = new Date();
+		d.setDate(d.getDate() + dayindex - d.getDay());
+		this.task(function(task) {
+			tslot(task, "weekly", d);
+		});
 	},
 	daily: function() {
 		var tslot = this.timeslot;
