@@ -4,5 +4,9 @@ CT.require("user.core");
 
 CT.onload(function() {
 	CT.initCore();
-	CT.dom.setContent("ctmain", (new CT.cal.Cal()).node);
+	CT.db.get("task", function(tasks) {
+		CT.dom.setContent("ctmain", (new CT.cal.Cal({
+			appointments: tasks
+		})).node);
+	});
 });
