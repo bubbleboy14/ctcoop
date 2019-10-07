@@ -49,9 +49,9 @@ coop.cal.Cal = CT.Class({
 					cb: function(duration) {
 						coop.cal.edit({
 							modelName: "timeslot",
-							when: when,
 							duration: duration,
-							schedule: schedule
+							schedule: schedule,
+							when: CT.parse.date2string(when, true)
 						}, function(slot) {
 							task.timeslots.push(slot);
 							coop.cal.edit({
