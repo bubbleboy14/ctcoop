@@ -15,24 +15,28 @@ coop.cal = {
 coop.cal.Cal = CT.Class({
 	CLASSNAME: "coop.cal.Cal",
 	once: function(node, cal, day, date, month, year) {
-		CT.modal.modal([
-			CT.cal.stamp(day, date, month, year),
-			"[add stuff here...]"
-		]);
+		var tslot = this.timeslot;
+		this.task(function(task) {
+			tslot(task, "once", new Date(year, month, date));
+		});
 	},
-	weekly: function(day) {
+	weekly: function(day, dayindex) {
 		CT.modal.modal([
 			day,
 			"[add stuff here...]"
 		]);
 	},
 	daily: function() {
+		var tslot = this.timeslot;
 		this.task(function(task) {
-			this.timeslot(task, "daily");
+			tslot(task, "daily");
 		});
 	},
+	reload: function() {
+		// TODO: reload everything!
+	},
 	timeslot: function(task, schedule, when) {
-		var hours, minutes;
+		var hours, minutes, reload = this.reload;
 		CT.modal.prompt({
 			prompt: "what time does it start?",
 			style: "time",
@@ -48,9 +52,14 @@ coop.cal.Cal = CT.Class({
 						coop.cal.edit({
 							modelName: "timeslot",
 							when: when,
-							duration: duration
+							duration: duration,
+							schedule: schedule
 						}, function(slot) {
-							// TODO: reload everything!
+							task.timeslots.push(slot.key);
+							coop.cal.edit({
+								key: task.key,
+								timeslots: task.timeslots
+							}, reload);
 						});
 					}
 				});
