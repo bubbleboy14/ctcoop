@@ -1,23 +1,79 @@
-coop.cal = {};
+coop.cal = {
+	edit: function(data, cb) {
+		CT.net.post({
+			path: "/_db",
+			params: {
+				data: data,
+				action: "edit",
+				pw: core.config.keys.storage
+			},
+			cb: cb
+		});
+	}
+};
 
 coop.cal.Cal = CT.Class({
 	CLASSNAME: "coop.cal.Cal",
-	dateClick: function(node, cal, day, date, month, year) {
-		this.log(date, month, year);
+	once: function(node, cal, day, date, month, year) {
 		CT.modal.modal([
 			CT.cal.stamp(day, date, month, year),
 			"[add stuff here...]"
 		]);
 	},
-	dayClick: function(day) {
-		this.log(day);
+	weekly: function(day) {
 		CT.modal.modal([
 			day,
 			"[add stuff here...]"
 		]);
 	},
 	daily: function() {
-
+		this.task(function(task) {
+			this.timeslot(task, "daily");
+		});
+	},
+	timeslot: function(task, schedule, when) {
+		var hours, minutes;
+		CT.modal.prompt({
+			prompt: "what time does it start?",
+			style: "time",
+			cb: function(time) {
+				[hours, minutes] = time.split(":");
+				when = when || new Date();
+				when.setHours(hours);
+				when.setMinutes(minutes);
+				CT.modal.prompt({
+					prompt: "how many hours does it last?",
+					style: "number",
+					cb: function(duration) {
+						coop.cal.edit({
+							modelName: "timeslot",
+							when: when,
+							duration: duration
+						}, function(slot) {
+							// TODO: reload everything!
+						});
+					}
+				});
+			}
+		});
+	},
+	task: function(cb) {
+		CT.modal.prompt({
+			prompt: "what is this task called?",
+			cb: function(tname) {
+				CT.modal.prompt({
+					isTA: true,
+					prompt: "please describe this task",
+					cb: function(tdesc) {
+						coop.cal.edit({
+							modelName: "task",
+							name: tname,
+							description: tdesc
+						}, cb);
+					}
+				});
+			}
+		});
 	},
 	help: function() {
 		CT.modal.modal([
@@ -35,8 +91,8 @@ coop.cal.Cal = CT.Class({
 		var cal = this.cal = new CT.cal.Cal({
 			appointments: this.tasks,
 			click: {
-				date: this.dateClick,
-				day: this.dayClick
+				date: this.once,
+				day: this.weekly
 			}
 		});
 		CT.dom.setContent(this.opts.parent, [
