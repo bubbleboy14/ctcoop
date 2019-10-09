@@ -14,24 +14,53 @@ coop.cal = {
 
 coop.cal.Cal = CT.Class({
 	CLASSNAME: "coop.cal.Cal",
-	once: function(date, month, year) {
-		var tslot = this.timeslot;
-		this.task(function(task) {
-			tslot(task, "once", new Date(year, month, date));
-		});
-	},
-	weekly: function(day, dayindex) {
-		var tslot = this.timeslot, d = new Date();
-		d.setDate(d.getDate() + dayindex - d.getDay());
-		this.task(function(task) {
-			tslot(task, "weekly", d);
-		});
-	},
-	daily: function() {
-		var tslot = this.timeslot;
-		this.task(function(task) {
-			tslot(task, "daily");
-		});
+	click: {
+		once: function(date, month, year) {
+			var tslot = this.timeslot;
+			this.task(function(task) {
+				tslot(task, "once", new Date(year, month, date));
+			});
+		},
+		weekly: function(day, dayindex) {
+			var tslot = this.timeslot, d = new Date();
+			d.setDate(d.getDate() + dayindex - d.getDay());
+			this.task(function(task) {
+				tslot(task, "weekly", d);
+			});
+		},
+		daily: function() {
+			var tslot = this.timeslot;
+			this.task(function(task) {
+				tslot(task, "daily");
+			});
+		},
+		task: function(slot, date) {
+			var buttz = [
+				CT.dom.button("once", function() {
+					
+				})
+			];
+			if (slot.schedule == "daily")
+				buttz.push(CT.dom.button("daily"));
+			if (slot.schedule != "once")
+				buttz.push(CT.dom.button("weekly"));
+			return CT.dom.div([
+				CT.dom.div("Volunteer", "big"),
+				buttz
+			], "centered");
+		},
+		help: function() {
+			CT.modal.modal([
+				CT.dom.div("How does this work?", "biggest centered"),
+				CT.dom.div([
+					"Click the 'daily task' button to create a new daily task",
+					"Click a day name to set up a weekly task.",
+					"Click a date to set up a non-recurring task.",
+					"Click the task edit button to edit text and timeslots.",
+					"Click a task to volunteer."
+				], "subpadded")
+			]);
+		}
 	},
 	timeslot: function(task, schedule, when) {
 		var hours, minutes, cal = this.cal;
@@ -87,29 +116,18 @@ coop.cal.Cal = CT.Class({
 			}
 		});
 	},
-	help: function() {
-		CT.modal.modal([
-			CT.dom.div("How does this work?", "biggest centered"),
-			CT.dom.div([
-				"Click the 'daily task' button to create a new daily task",
-				"Click a day name to set up a weekly task.",
-				"Click a date to set up a non-recurring task.",
-				"Click the task edit button to edit text and timeslots.",
-				"Click a task to volunteer."
-			], "subpadded")
-		]);
-	},
 	build: function() {
 		var cal = this.cal = new CT.cal.Cal({
 			appointments: this.tasks,
 			click: {
-				date: this.once,
-				day: this.weekly
+				date: this.click.once,
+				day: this.click.weekly,
+				appointment: this.click.task
 			}
 		});
 		CT.dom.setContent(this.opts.parent, [
-			CT.dom.button("help", this.help, "right"),
-			CT.dom.button("daily task", this.daily, "left"),
+			CT.dom.button("help", this.click.help, "right"),
+			CT.dom.button("daily task", this.click.daily, "left"),
 			cal.node
 		]);
 	},
