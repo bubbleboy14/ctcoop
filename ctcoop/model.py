@@ -9,12 +9,12 @@ class Timeslot(db.TimeStampedBase):
 	when = db.DateTime()
 	duration = db.Float() # hours
 
+class Commitment(db.TimeStampedBase):
+	steward = db.ForeignKey() # CTUser, subclass (such as Member), or custom
+	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
+
 class Task(db.TimeStampedBase):
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
+	commitments = db.ForeignKey(kind=Commitment, repeated=True)
 	name = db.String()
 	description = db.Text()
-
-class Responsibility(db.TimeStampedBase):
-	steward = db.ForeignKey() # CTUser, subclass (such as Member), or custom
-	task = db.ForeignKey(kind=Task)
-	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
