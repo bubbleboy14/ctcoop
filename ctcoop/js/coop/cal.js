@@ -70,6 +70,7 @@ coop.cal.Cal = CT.Class({
 			schedule: schedule,
 			when: CT.parse.date2string(when, true)
 		}, function(slot) {
+			CT.data.add(slot);
 			task.timeslots.push(slot);
 			coop.cal.edit({
 				key: task.key,
@@ -114,7 +115,10 @@ coop.cal.Cal = CT.Class({
 							modelName: "task",
 							name: tname,
 							description: tdesc
-						}, cb);
+						}, function(task) {
+							CT.data.add(task);
+							cb(task);
+						});
 					}
 				});
 			}
