@@ -36,14 +36,12 @@ coop.cal.Cal = CT.Class({
 		},
 		task: function(slot, date) {
 			var buttz = [
-				CT.dom.button("once", function() {
-
-				})
+				CT.dom.button("once", this.volunteer("once", slot, date))
 			];
 			if (slot.schedule == "daily")
-				buttz.push(CT.dom.button("daily"));
+				buttz.push(CT.dom.button("daily", this.volunteer("daily", slot)));
 			if (slot.schedule != "once")
-				buttz.push(CT.dom.button("weekly"));
+				buttz.push(CT.dom.button("weekly", this.volunteer("weekly", slot, date)));
 			return CT.dom.div([
 				CT.dom.div("Volunteer", "big"),
 				buttz
@@ -62,7 +60,17 @@ coop.cal.Cal = CT.Class({
 			]);
 		}
 	},
-	slot: function(task, schedule, when, duration) {
+	volunteer: function(schedule, slot, date) {
+		return function() {
+			/*
+				1) check for existing Commitment for steward/task
+				2) else create new one
+				3) create appropriate when
+				4) call slot(commitment, schedule, when, slot.duration, slot.task)
+			*/
+		};
+	},
+	slot: function(task, schedule, when, duration, realtask) { // if realtask, task is com
 		var cal = this.cal;
 		coop.cal.edit({
 			modelName: "timeslot",
@@ -78,7 +86,8 @@ coop.cal.Cal = CT.Class({
 					return ts.key;
 				})
 			}, function() {
-				cal.appointment(task);
+				if (realtask) task.task = realtask; // lol
+				cal[realtask ? "commitment" : "appointment"](task);
 				cal.orient();
 			});
 		});
