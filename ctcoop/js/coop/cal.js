@@ -60,17 +60,36 @@ coop.cal.Cal = CT.Class({
 			]);
 		}
 	},
+	commit: function(schedule, slot, date, commitment) {
+		date.setHours(slot.when.getHours());
+		date.setMinutes(slot.when.getMinutes());
+		this.slot(commitment, schedule, date, slot.duration, slot.task);
+	},
 	volunteer: function(schedule, slot, date) {
+		var thaz = this;
 		return function() {
-			/*
-				1) check for existing Commitment for steward/task
-				2) else create new one
-				3) create appropriate when
-				4) call slot(commitment, schedule, when, slot.duration, slot.task)
-			*/
+			var u = user.core.get(),
+				commitment = thaz.cal.stewardship(u, slot.task);
+			if (commitment)
+				return thaz.commit(schedule, slot, date, commitment);
+			coop.cal.edit({
+				modelName: "commitment",
+				steward: u.key
+			}, function(commitment) {
+				commitment.steward = u;
+				slot.task.commitments.push(commitment);
+				coop.cal.edit({
+					key: slot.task.key,
+					commitments: slot.task.commitments.map(function(c) {
+						return c.key;
+					})
+				}, function() {
+					thaz.commit(schedule, slot, date, commitment);
+				});
+			});
 		};
 	},
-	slot: function(task, schedule, when, duration, realtask) { // if realtask, task is com
+	slot: function(slotter, schedule, when, duration, task) {
 		var cal = this.cal;
 		coop.cal.edit({
 			modelName: "timeslot",
@@ -79,15 +98,14 @@ coop.cal.Cal = CT.Class({
 			when: CT.parse.date2string(when, true)
 		}, function(slot) {
 			CT.data.add(slot);
-			task.timeslots.push(slot);
+			slotter.timeslots.push(slot);
 			coop.cal.edit({
-				key: task.key,
-				timeslots: task.timeslots.map(function(ts) {
+				key: slotter.key,
+				timeslots: slotter.timeslots.map(function(ts) {
 					return ts.key;
 				})
 			}, function() {
-				if (realtask) task.task = realtask; // lol
-				cal[realtask ? "commitment" : "appointment"](task);
+				cal[task ? "commitment" : "appointment"](slotter, task);
 				cal.orient();
 			});
 		});
