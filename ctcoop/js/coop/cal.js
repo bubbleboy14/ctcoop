@@ -37,7 +37,7 @@ coop.cal.Cal = CT.Class({
 		task: function(slot, date) {
 			var buttz = [
 				CT.dom.button("once", function() {
-					
+
 				})
 			];
 			if (slot.schedule == "daily")
@@ -62,8 +62,28 @@ coop.cal.Cal = CT.Class({
 			]);
 		}
 	},
+	slot: function(task, schedule, when, duration) {
+		var cal = this.cal;
+		coop.cal.edit({
+			modelName: "timeslot",
+			duration: duration,
+			schedule: schedule,
+			when: CT.parse.date2string(when, true)
+		}, function(slot) {
+			task.timeslots.push(slot);
+			coop.cal.edit({
+				key: task.key,
+				timeslots: task.timeslots.map(function(ts) {
+					return ts.key;
+				})
+			}, function() {
+				cal.appointment(task);
+				cal.orient();
+			});
+		});
+	},
 	timeslot: function(task, schedule, when) {
-		var hours, minutes, cal = this.cal;
+		var hours, minutes, slot = this.slot;
 		CT.modal.prompt({
 			prompt: "what time does it start?",
 			style: "time",
@@ -76,23 +96,7 @@ coop.cal.Cal = CT.Class({
 					prompt: "how many hours does it last?",
 					style: "number",
 					cb: function(duration) {
-						coop.cal.edit({
-							modelName: "timeslot",
-							duration: duration,
-							schedule: schedule,
-							when: CT.parse.date2string(when, true)
-						}, function(slot) {
-							task.timeslots.push(slot);
-							coop.cal.edit({
-								key: task.key,
-								timeslots: task.timeslots.map(function(ts) {
-									return ts.key;
-								})
-							}, function() {
-								cal.appointment(task);
-								cal.orient();
-							});
-						});
+						slot(task, schedule, when, duration);
 					}
 				});
 			}
