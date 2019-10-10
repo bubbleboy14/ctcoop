@@ -60,8 +60,7 @@ coop.cal.Cal = CT.Class({
 					"Click the 'daily task' button to create a new daily task",
 					"Click a day name to set up a weekly task.",
 					"Click a date to set up a non-recurring task.",
-					"Click the task edit button to edit text and timeslots.",
-					"Click a task to volunteer."
+					"Click a task to edit or volunteer."
 				], "subpadded")
 			]);
 		}
