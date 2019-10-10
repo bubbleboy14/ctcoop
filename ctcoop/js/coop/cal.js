@@ -35,15 +35,14 @@ coop.cal.Cal = CT.Class({
 			});
 		},
 		task: function(slot, date, slots) {
-			var vol = this.volunteer, schedz = slots.map(function(s) {
+			var thaz = this, schedz = slots.map(function(s) {
 				return s.schedule;
 			}), vbutt = function(schedule) {
-				if (schedz.includes(schedule)) {
-					return CT.dom.button(schedule + " -- unvolunteer", function() {
-
-					});
-				}
-				return CT.dom.button(schedule, vol(schedule, slot, date));
+				if (schedz.includes(schedule))
+					return CT.dom.button(schedule + " -- unvolunteer",
+						thaz.unvolunteer(schedule, slot, date, slots));
+				return CT.dom.button(schedule,
+					thaz.volunteer(schedule, slot, date)); // use slots?
 			}, buttz = [ vbutt("once") ];
 			if (slot.schedule == "daily")
 				buttz.push(vbutt("daily"));
@@ -71,6 +70,14 @@ coop.cal.Cal = CT.Class({
 		date.setHours(slot.when.getHours());
 		date.setMinutes(slot.when.getMinutes());
 		this.slot(commitment, schedule, date, slot.duration, slot.task);
+	},
+	unvolunteer: function(schedule, slot, date, cslots) {
+		var thaz = this;
+		return function() {
+
+
+
+		};
 	},
 	volunteer: function(schedule, slot, date) {
 		var thaz = this;
