@@ -34,14 +34,21 @@ coop.cal.Cal = CT.Class({
 				tslot(task, "daily");
 			});
 		},
-		task: function(slot, date) {
-			var buttz = [
-				CT.dom.button("once", this.volunteer("once", slot, date))
-			];
+		task: function(slot, date, slots) {
+			var vol = this.volunteer, schedz = slots.map(function(s) {
+				return s.schedule;
+			}), vbutt = function(schedule) {
+				if (schedz.includes(schedule)) {
+					return CT.dom.button(schedule + " -- unvolunteer", function() {
+
+					});
+				}
+				return CT.dom.button(schedule, vol(schedule, slot, date));
+			}, buttz = [ vbutt("once") ];
 			if (slot.schedule == "daily")
-				buttz.push(CT.dom.button("daily", this.volunteer("daily", slot)));
+				buttz.push(vbutt("daily"));
 			if (slot.schedule != "once")
-				buttz.push(CT.dom.button("weekly", this.volunteer("weekly", slot, date)));
+				buttz.push(vbutt("weekly"));
 			return CT.dom.div([
 				CT.dom.div("Volunteer", "big"),
 				buttz
