@@ -108,6 +108,24 @@ coop.cal.Cal = CT.Class({
 							duration: val
 						}, refresh)
 					})
+				], "centered"),
+				CT.dom.div([
+					"what kind of schedule?",
+					CT.dom.select({
+						names: ["once", "weekly", "daily"],
+						curvalue: slot.schedule,
+						onchange: function(val) {
+							coop.cal.edit({
+								key: slot.key,
+								schedule: val
+							}, function() {
+								cal.unslot(slot);
+								slot.schedule = val;
+								cal.slot(slot);
+								refresh();
+							})
+						}
+					})
 				], "centered")
 			]);
 		},
