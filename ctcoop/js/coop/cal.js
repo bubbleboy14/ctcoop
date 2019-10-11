@@ -54,8 +54,34 @@ coop.cal.Cal = CT.Class({
 			], "centered");
 		},
 		edit: function(slot, date, slots) {
-			CT.modal.modal([
-				"edit!"
+			var task = slot.task, cal = this.cal, refresh = function() {
+				mod.hide();
+				cal.orient();
+			}, mod = CT.modal.modal([
+				CT.dom.div("Edit: " + task.name, "bigger centered"),
+				CT.dom.smartField({
+					classname: "w1",
+					value: task.name,
+					cb: function(val) {
+						task.name = val;
+						coop.cal.edit({
+							key: task.key,
+							name: task.name
+						}, refresh);
+					}
+				}),
+				CT.dom.smartField({
+					isTA: true,
+					classname: "w1",
+					value: task.description,
+					cb: function(val) {
+						task.description = val;
+						coop.cal.edit({
+							key: task.key,
+							description: task.description
+						}, refresh);
+					}
+				})
 			]);
 		},
 		help: function() {
