@@ -14,6 +14,7 @@ class Commitment(db.TimeStampedBase):
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
 
 class Task(db.TimeStampedBase):
+	editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
 	commitments = db.ForeignKey(kind=Commitment, repeated=True)
 	name = db.String()

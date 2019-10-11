@@ -53,6 +53,11 @@ coop.cal.Cal = CT.Class({
 				buttz
 			], "centered");
 		},
+		edit: function(slot, date, slots) {
+			CT.modal.modal([
+				"edit!"
+			]);
+		},
 		help: function() {
 			CT.modal.modal([
 				CT.dom.div("How does this work?", "biggest centered"),
@@ -154,7 +159,8 @@ coop.cal.Cal = CT.Class({
 						coop.cal.edit({
 							modelName: "task",
 							name: tname,
-							description: tdesc
+							description: tdesc,
+							editors: [ user.core.get("key") ]
 						}, function(task) {
 							CT.data.add(task);
 							cb(task);
@@ -170,6 +176,7 @@ coop.cal.Cal = CT.Class({
 			click: {
 				date: this.click.once,
 				day: this.click.weekly,
+				edit: this.click.edit,
 				appointment: this.click.task
 			}
 		});
