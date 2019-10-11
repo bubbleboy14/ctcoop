@@ -14,6 +14,15 @@ coop.cal = {
 
 coop.cal.Cal = CT.Class({
 	CLASSNAME: "coop.cal.Cal",
+	_: {
+		reschedule: function(slot, schedule, which) {
+			var fname = which || "slot";
+			this.cal["un" + fname](slot);
+			slot.schedule = schedule;
+			this.cal[fname](slot);
+			this.cal.orient();
+		}
+	},
 	click: {
 		once: function(date, month, year) {
 			var tslot = this.timeslot;
@@ -42,7 +51,7 @@ coop.cal.Cal = CT.Class({
 					return CT.dom.button(schedule + " -- unvolunteer",
 						thaz.unvolunteer(schedule, slot, date, slots));
 				return CT.dom.button(schedule,
-					thaz.volunteer(schedule, slot, date)); // use slots?
+					thaz.volunteer(schedule, slot, date, slots));
 			}, buttz = [ vbutt("once") ];
 			if (slot.schedule == "daily")
 				buttz.push(vbutt("daily"));
@@ -54,7 +63,7 @@ coop.cal.Cal = CT.Class({
 			], "centered");
 		},
 		edit: function(slot, date, slots) {
-			var task = slot.task, when = slot.when, refresh = function() {
+			var _ = this._, task = slot.task, when = slot.when, refresh = function() {
 				mod.hide();
 				cal.orient();
 			}, cal = this.cal, tshow = CT.dom.div(slot.duration), mod = CT.modal.modal([
@@ -119,10 +128,8 @@ coop.cal.Cal = CT.Class({
 								key: slot.key,
 								schedule: val
 							}, function() {
-								cal.unslot(slot);
-								slot.schedule = val;
-								cal.slot(slot);
-								refresh();
+								_.reschedule(slot, val);
+								mod.hide();
 							})
 						}
 					})
@@ -154,9 +161,18 @@ coop.cal.Cal = CT.Class({
 
 		};
 	},
-	volunteer: function(schedule, slot, date) {
-		var thaz = this;
+	volunteer: function(schedule, slot, date, cslots) {
+		var thaz = this, _ = this._;
 		return function() {
+			if (cslots && cslots.length) {
+				slot = cslots[0]; // hm...
+				return coop.cal.edit({
+					key: slot.key,
+					schedule: schedule
+				}, function() {
+					_.reschedule(slot, schedule, "commit");
+				});
+			}
 			var u = user.core.get(),
 				commitment = thaz.cal.stewardship(u, slot.task);
 			if (commitment)
