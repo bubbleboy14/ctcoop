@@ -274,11 +274,12 @@ coop.cal.Cal = CT.Class({
 		]);
 	},
 	load: function() {
-		var thiz = this;
-		CT.db.get("task", function(tasks) {
+		var thiz = this, oz = this.opts, doit = function(tasks) {
 			thiz.tasks = tasks;
 			thiz.build();
-		}, null, null, null, this.opts.filters);
+		};
+		oz.tasks && CT.db.multi(oz.tasks, doit) ||
+			CT.db.get("task", doit, null, null, null, oz.filters);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
