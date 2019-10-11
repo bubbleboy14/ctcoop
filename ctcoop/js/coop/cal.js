@@ -178,7 +178,7 @@ coop.cal.Cal = CT.Class({
 			if (commitment)
 				return thaz.commit(schedule, slot, date, commitment);
 			coop.cal.edit({
-				modelName: "commitment",
+				modelName: "stewardship",
 				steward: u.key
 			}, function(commitment) {
 				commitment.steward = u;
