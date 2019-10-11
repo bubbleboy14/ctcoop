@@ -57,7 +57,7 @@ coop.cal.Cal = CT.Class({
 			var task = slot.task, when = slot.when, refresh = function() {
 				mod.hide();
 				cal.orient();
-			}, cal = this.cal, mod = CT.modal.modal([
+			}, cal = this.cal, tshow = CT.dom.div(slot.duration), mod = CT.modal.modal([
 				CT.dom.div("Edit: " + task.name, "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
@@ -95,6 +95,19 @@ coop.cal.Cal = CT.Class({
 								when: CT.parse.date2string(when, true)
 							}, refresh);
 						})
+				], "centered"),
+				CT.dom.div([
+					"how many hours?",
+					tshow,
+					CT.dom.range(function(val) {
+						CT.dom.setContent(tshow, val);
+					}, 0.25, 5, slot.duration, 0.25, null, null, function(val) {
+						slot.duration = val;
+						coop.cal.edit({
+							key: slot.key,
+							duration: val
+						}, refresh)
+					})
 				], "centered")
 			]);
 		},
