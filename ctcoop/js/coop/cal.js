@@ -54,10 +54,10 @@ coop.cal.Cal = CT.Class({
 			], "centered");
 		},
 		edit: function(slot, date, slots) {
-			var task = slot.task, cal = this.cal, refresh = function() {
+			var task = slot.task, when = slot.when, refresh = function() {
 				mod.hide();
 				cal.orient();
-			}, mod = CT.modal.modal([
+			}, cal = this.cal, mod = CT.modal.modal([
 				CT.dom.div("Edit: " + task.name, "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
@@ -81,7 +81,21 @@ coop.cal.Cal = CT.Class({
 							description: task.description
 						}, refresh);
 					}
-				})
+				}),
+				CT.dom.div([
+					"what time?",
+					CT.dom.timeSelector(null,
+						when.toTimeString().slice(0, 5), function(time) {
+							var hours, minutes;
+							[hours, minutes] = time.split(":");
+							when.setHours(hours);
+							when.setMinutes(minutes);
+							coop.cal.edit({
+								key: slot.key,
+								when: CT.parse.date2string(when, true)
+							}, refresh);
+						})
+				], "centered")
 			]);
 		},
 		help: function() {
