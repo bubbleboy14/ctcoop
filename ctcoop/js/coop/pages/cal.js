@@ -5,5 +5,5 @@ CT.require("coop.cal");
 
 CT.onload(function() {
 	CT.initCore();
-	new coop.cal.Cal();
+	new coop.cal.Cal(core.config.ctcoop.cal);
 });
