@@ -19,3 +19,4 @@ class Task(db.TimeStampedBase):
 	commitments = db.ForeignKey(kind=Stewardship, repeated=True)
 	name = db.String()
 	description = db.Text()
+	mode = db.String() # arbitrary
