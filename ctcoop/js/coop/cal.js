@@ -21,6 +21,33 @@ coop.cal.Cal = CT.Class({
 			slot.schedule = schedule;
 			this.cal[fname](slot);
 			this.cal.orient();
+		},
+		task: function(cb, mode) {
+			var oz = this.opts, tdata;
+			CT.modal.prompt({
+				prompt: "what is this task called?",
+				cb: function(tname) {
+					CT.modal.prompt({
+						isTA: true,
+						prompt: "please describe this task",
+						cb: function(tdesc) {
+							tdata = {
+								modelName: "task",
+								name: tname,
+								description: tdesc,
+								editors: [ user.core.get("key") ]
+							};
+							if (mode)
+								tdata.mode = mode;
+							coop.cal.edit(tdata, function(task) {
+								CT.data.add(task);
+								oz.ontask && oz.ontask(task);
+								cb(task);
+							});
+						}
+					});
+				}
+			});
 		}
 	},
 	click: {
@@ -237,26 +264,14 @@ coop.cal.Cal = CT.Class({
 		});
 	},
 	task: function(cb) {
-		var oz = this.opts;
-		CT.modal.prompt({
-			prompt: "what is this task called?",
-			cb: function(tname) {
-				CT.modal.prompt({
-					isTA: true,
-					prompt: "please describe this task",
-					cb: function(tdesc) {
-						coop.cal.edit({
-							modelName: "task",
-							name: tname,
-							description: tdesc,
-							editors: [ user.core.get("key") ]
-						}, function(task) {
-							CT.data.add(task);
-							oz.ontask && oz.ontask(task);
-							cb(task);
-						});
-					}
-				});
+		var task = this._.task;
+		if (!this.opts.mode)
+			return task(cb);
+		CT.modal.choice({
+			prompt: this.opts.mode.prompt || "select a mode",
+			data: this.opts.mode.choices,
+			cb: function(mode) {
+				task(cb, mode);
 			}
 		});
 	},
