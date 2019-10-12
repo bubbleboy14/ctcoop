@@ -93,7 +93,7 @@ coop.cal.Cal = CT.Class({
 			var _ = this._, task = slot.task, when = slot.when, refresh = function() {
 				mod.hide();
 				cal.orient();
-			}, cal = this.cal, tshow = CT.dom.div(slot.duration), mod = CT.modal.modal([
+			}, cal = this.cal, tshow = CT.dom.div(slot.duration), content = [
 				CT.dom.div("Edit: " + task.name, "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
@@ -161,7 +161,22 @@ coop.cal.Cal = CT.Class({
 						}
 					})
 				], "centered")
-			]);
+			], mod;
+			this.opts.mode && content.push(CT.dom.div([
+				"what compensation mode?",
+				CT.dom.select({
+					names: this.opts.mode.choices,
+					curvalue: task.mode,
+					onchange: function(val) {
+						task.mode = val;
+						coop.cal.edit({
+							key: task.key,
+							mode: val
+						}, mod.hide);
+					}
+				})
+			], "centered"));
+			mod = CT.modal.modal(content);
 		},
 		help: function() {
 			var steps = this.opts.nonew ? [] : [
