@@ -236,6 +236,7 @@ coop.cal.Cal = CT.Class({
 		});
 	},
 	task: function(cb) {
+		var oz = this.opts;
 		CT.modal.prompt({
 			prompt: "what is this task called?",
 			cb: function(tname) {
@@ -250,6 +251,7 @@ coop.cal.Cal = CT.Class({
 							editors: [ user.core.get("key") ]
 						}, function(task) {
 							CT.data.add(task);
+							oz.ontask && oz.ontask(task);
 							cb(task);
 						});
 					}
