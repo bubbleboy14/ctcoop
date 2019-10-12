@@ -137,14 +137,15 @@ coop.cal.Cal = CT.Class({
 			]);
 		},
 		help: function() {
+			var steps = this.opts.nonew ? [] : [
+				"Click the 'daily task' button to create a new daily task",
+				"Click a day name to set up a weekly task.",
+				"Click a date to set up a non-recurring task."
+			];
+			steps.push("Click a task to edit or volunteer.");
 			CT.modal.modal([
 				CT.dom.div("How does this work?", "biggest centered"),
-				CT.dom.div([
-					"Click the 'daily task' button to create a new daily task",
-					"Click a day name to set up a weekly task.",
-					"Click a date to set up a non-recurring task.",
-					"Click a task to edit or volunteer."
-				], "subpadded")
+				CT.dom.div(steps, "subpadded")
 			]);
 		}
 	},
@@ -260,28 +261,35 @@ coop.cal.Cal = CT.Class({
 		});
 	},
 	build: function() {
-		var cal = this.cal = new CT.cal.Cal({
+		var cz = {
+			edit: this.click.edit,
+			appointment: this.click.task
+		}, content = [
+			CT.dom.button("help", this.click.help, "right")
+		];
+		if (!this.opts.nonew) {
+			cz.date = this.click.once;
+			cz.day = this.click.weekly;
+			content.push(CT.dom.button("daily task",
+				this.click.daily, "left"));
+		}
+		this.cal = new CT.cal.Cal({
 			appointments: this.tasks,
-			click: {
-				date: this.click.once,
-				day: this.click.weekly,
-				edit: this.click.edit,
-				appointment: this.click.task
-			}
+			click: cz
 		});
-		CT.dom.setContent(this.opts.parent, [
-			CT.dom.button("help", this.click.help, "right"),
-			CT.dom.button("daily task", this.click.daily, "left"),
-			cal.node
-		]);
+		content.push(this.cal.node);
+		CT.dom.setContent(this.opts.parent, content);
 	},
 	load: function() {
 		var thiz = this, oz = this.opts, doit = function(tasks) {
 			thiz.tasks = tasks;
 			thiz.build();
 		};
-		oz.tasks ? CT.db.multi(oz.tasks, doit) :
-			CT.db.get("task", doit, null, null, null, oz.filters);
+		if (oz.gettasks)
+			oz.gettasks(doit);
+		else
+			oz.tasks ? CT.db.multi(oz.tasks, doit) :
+				CT.db.get("task", doit, null, null, null, oz.filters);
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
