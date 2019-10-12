@@ -13,6 +13,9 @@ class Stewardship(db.TimeStampedBase):
 	steward = db.ForeignKey() # CTUser, subclass (such as Member), or custom
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
 
+	def task(self):
+		return Task.query(Task.commitments.contains(self.key.urlsafe())).get()
+
 class Task(db.TimeStampedBase):
 	editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
