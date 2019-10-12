@@ -16,6 +16,9 @@ class Stewardship(db.TimeStampedBase):
 	def task(self):
 		return Task.query(Task.commitments.contains(self.key.urlsafe())).get()
 
+def slot2stewardship(slot):
+	return Stewardship.query(Stewardship.timeslots.contains(slot.key.urlsafe())).get()
+
 class Task(db.TimeStampedBase):
 	editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
 	timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
