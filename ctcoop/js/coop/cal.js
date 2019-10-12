@@ -280,7 +280,7 @@ coop.cal.Cal = CT.Class({
 			thiz.tasks = tasks;
 			thiz.build();
 		};
-		oz.tasks && CT.db.multi(oz.tasks, doit) ||
+		oz.tasks ? CT.db.multi(oz.tasks, doit) :
 			CT.db.get("task", doit, null, null, null, oz.filters);
 	},
 	init: function(opts) {
