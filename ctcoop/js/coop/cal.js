@@ -86,6 +86,33 @@ coop.cal.Cal = CT.Class({
 				buttz.push(vbutt("weekly"));
 			return CT.dom.div(buttz, "centered");
 		},
+		exception: function(slot, date, uslots) {
+			var bs = "create exception for ", ebz = [
+				CT.dom.button(bs + date.toDateString(), function() {
+
+				}, "w1 block")
+			], ez = uslots.filter(function(s) {
+				return s.schedule == "exception";
+			}), eline = function(ex) {
+				return [
+					CT.dom.button("remove exception", function() {
+
+					}, "right"),
+					ex.when.toDateString()
+				];
+			}, ds = bs + CT.cal.days[date.getDay()] + "s", ebuttz = function() {
+				if (slot.schedule == "daily") {
+					ebz.push(CT.dom.button(ds, function() {
+
+					}, "w1 block"));
+				}
+				return ebz;
+			};
+			return [
+				CT.dom.div("Exceptions", "big"),
+				ez.length ? ez.map(eline) : ebuttz()
+			];
+		},
 		edit: function(slot, date, slots) {
 			var _ = this._, cal = this.cal, refresh = function() {
 				mod.hide();
@@ -315,7 +342,8 @@ coop.cal.Cal = CT.Class({
 	build: function() {
 		var cz = {
 			edit: this.click.edit,
-			appointment: this.click.task
+			appointment: this.click.task,
+			exception: this.click.exception
 		}, content = [
 			CT.dom.button("help", this.click.help, "right")
 		];
