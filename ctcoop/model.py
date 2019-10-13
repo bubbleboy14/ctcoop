@@ -26,3 +26,5 @@ class Task(db.TimeStampedBase):
 	name = db.String()
 	description = db.Text()
 	mode = db.String() # arbitrary
+	requirements = db.String(repeated=True)
+	steps = db.String(repeated=True)
