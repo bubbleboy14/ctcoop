@@ -87,19 +87,21 @@ coop.cal.Cal = CT.Class({
 			return CT.dom.div(buttz, "centered");
 		},
 		exception: function(slot, date, uslots) {
-			var bs = "create exception for ", ebz = [
-				CT.dom.button(bs + date.toDateString(), function() {
-
-				}, "w1 block")
-			], ez = uslots.filter(function(s) {
+			var slotter = this.slot, ez = uslots.filter(function(s) {
 				return s.schedule == "exception";
-			}), eline = function(ex) {
-				return [
+			}), bs = "create exception for ", ebz = [
+				CT.dom.button(bs + date.toDateString(), function() {
+					date.setHours(slot.when.getHours());
+					date.setMinutes(slot.when.getMinutes());
+					slotter(slot.task, "exception", date, slot.when.duration);
+				}, "w1 block")
+			], eline = function(ex) {
+				return CT.dom.div([
 					CT.dom.button("remove exception", function() {
 
 					}, "right"),
 					ex.when.toDateString()
-				];
+				], "bordered padded margined round");
 			}, ds = bs + CT.cal.days[date.getDay()] + "s", ebuttz = function() {
 				if (slot.schedule == "daily") {
 					ebz.push(CT.dom.button(ds, function() {
