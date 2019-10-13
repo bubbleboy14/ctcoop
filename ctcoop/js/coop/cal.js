@@ -84,16 +84,18 @@ coop.cal.Cal = CT.Class({
 				buttz.push(vbutt("daily"));
 			if (slot.schedule != "once")
 				buttz.push(vbutt("weekly"));
-			return CT.dom.div([
-				CT.dom.div("Volunteer", "big"),
-				buttz
-			], "centered");
+			return CT.dom.div(buttz, "centered");
 		},
 		edit: function(slot, date, slots) {
-			var _ = this._, task = slot.task, when = slot.when, refresh = function() {
+			var _ = this._, cal = this.cal, refresh = function() {
 				mod.hide();
 				cal.orient();
-			}, cal = this.cal, tshow = CT.dom.div(slot.duration), content = [
+			}, task = slot.task, when = slot.when, eobj = {
+				key: task.key
+			}, tshow = CT.dom.div(slot.duration), upvals = function(key, arr) {
+				task[key] = eobj[key] = arr;
+				coop.cal.edit(eobj);
+			}, content = [
 				CT.dom.div("Edit: " + task.name, "bigger centered"),
 				CT.dom.smartField({
 					classname: "w1",
@@ -161,7 +163,18 @@ coop.cal.Cal = CT.Class({
 						}
 					})
 				], "centered")
-			], mod;
+			], stepper = CT.dom.fieldList({
+				bottomadd: true,
+				vals: task.steps,
+				onchange: function(vals) {
+					upvals("steps", vals);
+				}
+			}), requirer = CT.dom.fieldList({
+				vals: task.requirements,
+				onchange: function(vals) {
+					upvals("requirements", vals);
+				}
+			}), mod;
 			this.opts.mode && content.push(CT.dom.div([
 				"what compensation mode?",
 				CT.dom.select({
@@ -176,7 +189,16 @@ coop.cal.Cal = CT.Class({
 					}
 				})
 			], "centered"));
-			mod = CT.modal.modal(content);
+			mod = CT.modal.modal(content.concat([
+				CT.dom.div([
+					"what are the steps?",
+					stepper, stepper.empty, stepper.addButton
+				], "centered"),
+				CT.dom.div([
+					"what are the requirements?",
+					requirer.empty, requirer.addButton, requirer
+				], "centered")
+			]));
 		},
 		help: function() {
 			var steps = this.opts.nonew ? [] : [
