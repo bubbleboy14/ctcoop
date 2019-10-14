@@ -75,7 +75,7 @@ coop.cal.Cal = CT.Class({
 				tslot(task, "daily");
 			});
 		},
-		task: function(slot, date, slots) {
+		volunteer: function(slot, date, slots) {
 			var thaz = this, schedz = slots.map(function(s) {
 				return s.schedule;
 			}), vbutt = function(schedule) {
@@ -91,10 +91,8 @@ coop.cal.Cal = CT.Class({
 				buttz.push(vbutt("weekly"));
 			return CT.dom.div(buttz, "centered");
 		},
-		exception: function(slot, date, uslots) {
-			var slotter = this.slot, ez = uslots.filter(function(s) {
-				return s.schedule == "exception";
-			}), eslot = function(etype) {
+		exception: function(slot, date) {
+			var slotter = this.slot, eslot = function(etype) {
 				return function() {
 					date.setHours(slot.when.getHours());
 					date.setMinutes(slot.when.getMinutes());
@@ -103,19 +101,7 @@ coop.cal.Cal = CT.Class({
 			}, bs = "create exception for ", ebz = [
 				CT.dom.button(bs + date.toDateString(),
 					eslot("exception"), "w1 block")
-			], eline = function(ex) {
-
-				// TODO: move this to task editor....
-
-				return CT.dom.div([
-					CT.dom.button("remove exception", function() {
-
-					}, "right"),
-					ex.when.toDateString()
-				], "bordered padded margined round");
-
-
-			}, ds = bs + CT.cal.days[date.getDay()] + "s", ebuttz = function() {
+			], ds = bs + CT.cal.days[date.getDay()] + "s", ebuttz = function() {
 				if (slot.schedule == "daily") {
 					ebz.push(CT.dom.button(ds, eslot("offday"), "w1 block"));
 				}
@@ -123,15 +109,29 @@ coop.cal.Cal = CT.Class({
 			};
 			return [
 				CT.dom.div("Exceptions", "big"),
-				ez.length ? ez.map(eline) : ebuttz()
+				ebuttz()
 			];
 		},
-		edit: function(slot, date, slots) {
+		edit: function(slot, date) {
 			var _ = this._, cal = this.cal, refresh = function() {
 				mod.hide();
 				cal.orient();
 			}, task = slot.task, when = slot.when, eobj = {
 				key: task.key
+			}, ez = slot.task.timeslots.filter(function(s) {
+				return s.schedule == "exception" || s.schedule == "offday";
+			}), eline = function(ex) {
+				return CT.dom.div([
+					CT.dom.button("remove exception", function() {
+						CT.data.remove(slot.task.timeslots, ex);
+						coop.cal.rm(ex.key, function() {
+							cal.unslot(ex);
+							refresh();
+						});
+					}, "right"),
+					(ex.schedule == "exception") ? ex.when.toDateString()
+						: (CT.cal.days[ex.when.getDay()] + "s")
+				], "bordered padded margined round");
 			}, tshow = CT.dom.div(slot.duration), upvals = function(key, arr) {
 				task[key] = eobj[key] = arr;
 				coop.cal.edit(eobj);
@@ -215,6 +215,10 @@ coop.cal.Cal = CT.Class({
 					upvals("requirements", vals);
 				}
 			}), mod;
+			ez.length && content.push([
+				"exceptions",
+				ez.map(eline)
+			]);
 			this.opts.mode && content.push(CT.dom.div([
 				"what compensation mode?",
 				CT.dom.select({
@@ -360,7 +364,7 @@ coop.cal.Cal = CT.Class({
 	build: function() {
 		var cz = {
 			edit: this.click.edit,
-			appointment: this.click.task,
+			volunteer: this.click.volunteer,
 			exception: this.click.exception
 		}, content = [
 			CT.dom.button("help", this.click.help, "right")
