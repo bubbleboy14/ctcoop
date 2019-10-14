@@ -5,7 +5,8 @@ class Member(CTUser):
     roles = db.String(repeated=True)
 
 class Timeslot(db.TimeStampedBase):
-	schedule = db.String(choices=["once", "weekly", "daily", "exception"])
+	schedule = db.String(choices=["once", "weekly",
+		"daily", "exception", "offday"])
 	when = db.DateTime()
 	duration = db.Float() # hours
 
