@@ -1,14 +1,19 @@
 coop.cal = {
-	edit: function(data, cb) {
+	_edit: function(params, cb, action) {
 		CT.net.post({
 			path: "/_db",
-			params: {
-				data: data,
-				action: "edit",
+			params: CT.merge(params, {
+				action: action || "edit",
 				pw: core.config.keys.storage
-			},
+			}),
 			cb: cb
 		});
+	},
+	edit: function(data, cb) {
+		coop.cal._edit({ data: data }, cb);
+	},
+	rm: function(key, cb) {
+		coop.cal._edit({ key: key }, cb, "delete");
 	}
 };
 
@@ -254,11 +259,16 @@ coop.cal.Cal = CT.Class({
 		this.slot(commitment, schedule, date, slot.duration, slot.task);
 	},
 	unvolunteer: function(schedule, slot, date, cslots) {
-		var thaz = this;
+		var cal = this.cal,
+			cslot = cslots[0], // there can be only one? (think so?)
+			stew = cslot.task; // should change that name....
 		return function() {
-
-
-
+			CT.data.remove(stew.timeslots, cslot);
+			coop.cal.rm(cslot.key, function() {
+				cal.unsteward(stew.steward, slot.task, cslot);
+				cal.uncommit(cslot);
+				cal.orient();
+			});
 		};
 	},
 	volunteer: function(schedule, slot, date, cslots) {
