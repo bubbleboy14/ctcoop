@@ -53,6 +53,42 @@ coop.cal.Cal = CT.Class({
 					});
 				}
 			});
+		},
+		exceptions: function(slot, date) {
+			var slotter = this.slot, eslot = function(etype) {
+				return function() {
+					date.setHours(slot.when.getHours());
+					date.setMinutes(slot.when.getMinutes());
+					slotter(slot.task, etype, date,
+						slot.when.duration, slot.task.task);
+				};
+			}, bs = "create exception for ", ebz = [
+				CT.dom.button(bs + date.toDateString(),
+					eslot("exception"), "w1 block")
+			], ds = bs + CT.cal.days[date.getDay()] + "s";
+			if (slot.schedule == "daily")
+				ebz.push(CT.dom.button(ds, eslot("offday"), "w1 block"));
+			return ebz;
+		},
+		eslots: function(slotter, cb) {
+			var ez = slotter.timeslots.filter(function(s) {
+				return s.schedule == "exception" || s.schedule == "offday";
+			}), eline = function(ex) {
+				return CT.dom.div([
+					CT.dom.button("remove exception", function() {
+						CT.data.remove(slotter.timeslots, ex);
+						coop.cal.rm(ex.key, function() {
+							cb(ex);
+						});
+					}, "right"),
+					(ex.schedule == "exception") ? ex.when.toDateString()
+						: (CT.cal.days[ex.when.getDay()] + "s")
+				], "bordered padded margined round");
+			};
+			return ez.length && [
+				"exceptions",
+				ez.map(eline)
+			];
 		}
 	},
 	click: {
@@ -84,32 +120,29 @@ coop.cal.Cal = CT.Class({
 						thaz.unvolunteer(schedule, slot, date, slots));
 				return CT.dom.button(schedule,
 					thaz.volunteer(schedule, slot, date, slots));
-			}, buttz = [ vbutt("once") ];
+			}, buttz = [ vbutt("once") ], eslots;
 			if (slot.schedule == "daily")
 				buttz.push(vbutt("daily"));
-			if (slot.schedule != "once")
+			if (slot.schedule != "once") {
 				buttz.push(vbutt("weekly"));
+				if (slots.length) {
+					eslots = this._.eslots(slots[0].task, function(ex) {
+						thaz.cal.uncommit(ex);
+						thaz.cal.orient();
+					});
+					eslots && buttz.push(eslots);
+					slots.forEach(function(cslot, i) {
+						if (cslot.schedule != "once")
+							buttz.push(thaz._.exceptions(cslot, date));
+					});
+				}
+			}
 			return CT.dom.div(buttz, "centered");
 		},
 		exception: function(slot, date) {
-			var slotter = this.slot, eslot = function(etype) {
-				return function() {
-					date.setHours(slot.when.getHours());
-					date.setMinutes(slot.when.getMinutes());
-					slotter(slot.task, etype, date, slot.when.duration);
-				};
-			}, bs = "create exception for ", ebz = [
-				CT.dom.button(bs + date.toDateString(),
-					eslot("exception"), "w1 block")
-			], ds = bs + CT.cal.days[date.getDay()] + "s", ebuttz = function() {
-				if (slot.schedule == "daily") {
-					ebz.push(CT.dom.button(ds, eslot("offday"), "w1 block"));
-				}
-				return ebz;
-			};
 			return [
 				CT.dom.div("Exceptions", "big"),
-				ebuttz()
+				this._.exceptions(slot, date)
 			];
 		},
 		edit: function(slot, date) {
@@ -118,20 +151,6 @@ coop.cal.Cal = CT.Class({
 				cal.orient();
 			}, task = slot.task, when = slot.when, eobj = {
 				key: task.key
-			}, ez = slot.task.timeslots.filter(function(s) {
-				return s.schedule == "exception" || s.schedule == "offday";
-			}), eline = function(ex) {
-				return CT.dom.div([
-					CT.dom.button("remove exception", function() {
-						CT.data.remove(slot.task.timeslots, ex);
-						coop.cal.rm(ex.key, function() {
-							cal.unslot(ex);
-							refresh();
-						});
-					}, "right"),
-					(ex.schedule == "exception") ? ex.when.toDateString()
-						: (CT.cal.days[ex.when.getDay()] + "s")
-				], "bordered padded margined round");
 			}, tshow = CT.dom.div(slot.duration), upvals = function(key, arr) {
 				task[key] = eobj[key] = arr;
 				coop.cal.edit(eobj);
@@ -214,11 +233,11 @@ coop.cal.Cal = CT.Class({
 				onchange: function(vals) {
 					upvals("requirements", vals);
 				}
-			}), mod;
-			ez.length && content.push([
-				"exceptions",
-				ez.map(eline)
-			]);
+			}), mod, eslots = _.eslots(slot.task, function(ex) {
+				cal.unslot(ex);
+				refresh();
+			});
+			eslots && content.push(eslots);
 			this.opts.mode && content.push(CT.dom.div([
 				"what compensation mode?",
 				CT.dom.select({
