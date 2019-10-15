@@ -46,7 +46,7 @@ coop.cal.Cal = CT.Class({
 								tdata.mode = mode;
 							coop.cal.edit(tdata, function(task) {
 								CT.data.add(task);
-								oz.ontask && oz.ontask(task);
+								oz.on.task && oz.on.task(task);
 								cb(task);
 							});
 						}
@@ -149,7 +149,7 @@ coop.cal.Cal = CT.Class({
 			var _ = this._, cal = this.cal, refresh = function() {
 				mod.hide();
 				cal.orient();
-			}, task = slot.task, when = slot.when, eobj = {
+			}, opts = this.opts, task = slot.task, when = slot.when, eobj = {
 				key: task.key
 			}, tshow = CT.dom.div(slot.duration), upvals = function(key, arr) {
 				task[key] = eobj[key] = arr;
@@ -236,12 +236,23 @@ coop.cal.Cal = CT.Class({
 			}), mod, eslots = _.eslots(slot.task, function(ex) {
 				cal.unslot(ex);
 				refresh();
-			});
+			}), edz = slot.task.editors.map(function(ed) {
+				return CT.data.get(ed).firstName;
+			}), edznz = [
+				"who are the editors for this task?",
+				edz
+			];
+			if (opts.on.editors) {
+				edznz.push(CT.dom.button("add editor", function() {
+					mod.hide();
+					opts.on.editors(slot.task);
+				}));
+			}
 			eslots && content.push(eslots);
-			this.opts.mode && content.push(CT.dom.div([
+			opts.mode && content.push(CT.dom.div([
 				"what compensation mode?",
 				CT.dom.select({
-					names: this.opts.mode.choices,
+					names: opts.mode.choices,
 					curvalue: task.mode,
 					onchange: function(val) {
 						task.mode = val;
@@ -260,7 +271,8 @@ coop.cal.Cal = CT.Class({
 				CT.dom.div([
 					"what are the requirements?",
 					requirer.empty, requirer.addButton, requirer
-				], "centered")
+				], "centered"),
+				CT.dom.div(edznz)
 			]));
 		},
 		help: function() {
@@ -414,7 +426,8 @@ coop.cal.Cal = CT.Class({
 	},
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
-			parent: "ctmain"
+			parent: "ctmain",
+			on: {} // editors
 		});
 		this.load();
 	}
