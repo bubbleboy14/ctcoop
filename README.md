@@ -22,6 +22,7 @@ This package provides organizational management tools (in the form of web pages 
 ## core.config.ctcoop
 ### Import line: 'CT.require("core.config");'
     {
+    	"cal": {},
     	"about": {
     		"members": {
     			"header": "Members",
