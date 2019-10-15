@@ -91,7 +91,21 @@ coop.cal.Editor = CT.Class({
 					}
 				})
 			], "centered")
-		], eslots = this.eslots(this.task, this.unexcept);
+		], eslots = this.eslots(this.task, this.unexcept),
+			d = slot.when, cal = this.cal, dayz = CT.cal.days;
+		(slot.schedule == "weekly") && content.push(CT.dom.select({
+			names: dayz,
+			curvalue: dayz[d.getDay()],
+			onchange: function(val) {
+				cal.unslot(slot);
+				d.setDate(d.getDate() + dayz.indexOf(val) - d.getDay());
+				cal.slot(slot);
+				coop.cal.util.edit({
+					key: slot.key,
+					when: CT.parse.date2string(d, true)
+				}, thaz.refresh);
+			}
+		}));
 		eslots && content.push(eslots);
 		return content;
 	},
