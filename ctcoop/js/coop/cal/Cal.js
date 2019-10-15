@@ -254,12 +254,16 @@ coop.cal.Cal = CT.Class({
 			}
 		});
 	},
+	setParent: function(parent) {
+		this.opts.parent = parent;
+		CT.dom.setContent(parent, this.content);
+	},
 	build: function() {
 		var cz = {
 			edit: this.click.edit,
 			volunteer: this.click.volunteer,
 			exception: this.click.exception
-		}, content = [
+		}, content = this.content = [
 			CT.dom.button("help", this.click.help, "right")
 		];
 		if (!this.opts.nonew) {
