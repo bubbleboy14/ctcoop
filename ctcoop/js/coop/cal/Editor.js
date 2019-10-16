@@ -166,8 +166,24 @@ coop.cal.Editor = CT.Class({
 		}
 		return content;
 	},
+	remover: function() {
+		var thaz = this, task = this.task;
+		return CT.dom.button("remove", function() {
+			if (confirm("are you sure you want to delete this task and all associated information?")
+				&& confirm("are you really sure?")) {
+				thaz.untask(task);
+				task.timeslots.forEach(thaz.cal.unslot);
+				task.commitments.forEach(function(comm) {
+					comm.timeslots.forEach(thaz.cal.uncommit);
+				});
+				thaz.refresh();
+				coop.cal.util.rm(task.key);
+			}
+		}, "left");
+	},
 	build: function() {
 		this.mod = CT.modal.modal([
+			this.remover(),
 			this.basics(),
 			this.schedule(),
 			this.lists(),
@@ -195,6 +211,7 @@ coop.cal.Editor = CT.Class({
 		this.date = opts.date;
 		this.slot = opts.slot;
 		this.modes = opts.modes;
+		this.untask = opts.untask;
 		this.eslots = opts.eslots;
 		this.task = opts.slot.task;
 		this.reschedule = opts.reschedule;
