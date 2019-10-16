@@ -93,6 +93,24 @@ coop.cal.Editor = CT.Class({
 			], "centered")
 		], eslots = this.eslots(this.task, this.unexcept),
 			d = slot.when, cal = this.cal, dayz = CT.cal.days;
+		(slot.schedule == "once") && content.push([
+			slot.when.toDateString(),
+			CT.dom.button("reschedule", function() {
+				CT.modal.prompt({
+					style: "date",
+					data: slot.when,
+					cb: function() {
+						coop.cal.util.edit({
+							key: slot.key,
+							when: CT.parse.date2string(slot.when, true)
+						}, function() {
+							thaz.reschedule(slot, "once");
+							thaz.mod.hide();
+						});
+					}
+				});
+			})
+		]);
 		(slot.schedule == "weekly") && content.push(CT.dom.select({
 			names: dayz,
 			curvalue: dayz[d.getDay()],
