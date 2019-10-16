@@ -134,7 +134,8 @@ coop.cal.Cal = CT.Class({
 				eslots: this._.eslots,
 				reschedule: this._.reschedule,
 				modes: this.opts.mode.choices,
-				editors: this.opts.on.editors
+				editors: this.opts.on.editors,
+				untask: this.opts.on.untask
 			});
 		},
 		help: function() {
@@ -293,7 +294,7 @@ coop.cal.Cal = CT.Class({
 	init: function(opts) {
 		this.opts = opts = CT.merge(opts, {
 			parent: "ctmain",
-			on: {} // editors
+			on: {} // task, untask, editors
 		});
 		this.load();
 	}
