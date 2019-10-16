@@ -151,17 +151,17 @@ coop.cal.Editor = CT.Class({
 			], "centered")
 		];
 	},
-	editors: function() {
+	editoreditor: function() {
 		var content = [
 			"who are the editors for this task?",
 			this.task.editors.map(function(ed) {
 				return CT.data.get(ed).firstName;
 			})
-		], editors = this.editors, slot = this.slot, mod = this.mod;
-		if (editors) {
+		], thaz = this;
+		if (this.editors) {
 			content.push(CT.dom.button("add editor", function() {
-				mod.hide();
-				editors(slot.task);
+				thaz.mod.hide();
+				thaz.editors(thaz.task);
 			}));
 		}
 		return content;
@@ -187,7 +187,7 @@ coop.cal.Editor = CT.Class({
 			this.basics(),
 			this.schedule(),
 			this.lists(),
-			this.editors()
+			this.editoreditor()
 		]);
 	},
 	refresh: function() {
@@ -214,6 +214,7 @@ coop.cal.Editor = CT.Class({
 		this.untask = opts.untask;
 		this.eslots = opts.eslots;
 		this.task = opts.slot.task;
+		this.editors = opts.editors;
 		this.reschedule = opts.reschedule;
 		this.build();
 	}
