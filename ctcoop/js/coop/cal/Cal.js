@@ -97,7 +97,7 @@ coop.cal.Cal = CT.Class({
 				return s.schedule;
 			}), vbutt = function(schedule) {
 				if (schedz.includes(schedule))
-					return CT.dom.button(schedule + " -- unvolunteer",
+					return CT.dom.button(schedule + " -- unparticipate",
 						thaz.unvolunteer(schedule, slot, date, slots));
 				return CT.dom.button(schedule,
 					thaz.volunteer(schedule, slot, date, slots));
@@ -144,7 +144,7 @@ coop.cal.Cal = CT.Class({
 				"Click a day name to set up a weekly task.",
 				"Click a date to set up a non-recurring task."
 			];
-			steps.push("Click a task to edit or volunteer.");
+			steps.push("Click a timeslot to edit or participate.");
 			CT.modal.modal([
 				CT.dom.div("How does this work?", "biggest centered"),
 				CT.dom.div(steps, "subpadded")
