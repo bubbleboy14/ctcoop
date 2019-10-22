@@ -152,12 +152,15 @@ coop.cal.Editor = CT.Class({
 		];
 	},
 	editoreditor: function() {
-		var content = [
+		var edz = CT.dom.div(), content = [
 			"who are the editors for this task?",
-			this.task.editors.map(function(ed) {
-				return CT.data.get(ed).firstName;
-			})
+			edz
 		], thaz = this;
+		CT.db.multi(this.task.editors, function(ez) {
+			CT.dom.setContent(edz, ez.map(function(e) {
+				return e.firstName;
+			}));
+		});
 		if (this.editors) {
 			content.push(CT.dom.button("add editor", function() {
 				thaz.mod.hide();
