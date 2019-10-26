@@ -1,4 +1,5 @@
 {
+	"updates": {},
 	"cal": {},
 	"about": {
 		"members": {
