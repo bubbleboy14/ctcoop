@@ -18,6 +18,9 @@ class Update(db.TimeStampedBase):
     conversation = db.ForeignKey(kind=Conversation)
 
     def oncreate(self):
+        convo = Conversation(topic=self.subject)
+        convo.put()
+        self.conversation = convo.key
         if self.recipients:
             recipients = db.get_multi(self.recipients)
         else:
