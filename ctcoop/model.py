@@ -6,14 +6,22 @@ from coopTemplates import RESCHED, UPDATE
 class Member(CTUser):
     roles = db.String(repeated=True)
 
+# various ForeignKey()s below (sender, recipients,
+# steward, editors) require CTUser, subclass (such
+# as Member), or custom user table
+
 class Update(db.TimeStampedBase):
-    sender = db.ForeignKey() # CTUser, subclass (such as Member), or custom
+    sender = db.ForeignKey()
     subject = db.String()
     message = db.Text()
+    recipients = db.ForeignKey(repeated=True)
     conversation = db.ForeignKey(kind=Conversation)
 
-    def send(self, recipients=None):
-        recipients = recipients or Member.query().all()
+    def oncreate(self):
+        if self.recipients:
+            recipients = db.get_multi(self.recipients)
+        else:
+            recipients = Member.query().all()
         bod = UPDATE%(self.sender.get().email, self.message)
         for recip in recipients:
             send_mail(to=recip.email, subject=self.subject, body=bod)
@@ -46,7 +54,7 @@ class Timeslot(db.TimeStampedBase):
             slotter.put(session)
 
 class Stewardship(db.TimeStampedBase):
-    steward = db.ForeignKey() # CTUser, subclass (such as Member), or custom
+    steward = db.ForeignKey()
     timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
 
     def task(self):
@@ -63,7 +71,7 @@ class Stewardship(db.TimeStampedBase):
         db.delete_multi(db.get_multi(self.timeslots, session), session)
 
 class Task(db.TimeStampedBase):
-    editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
+    editors = db.ForeignKey(repeated=True)
     timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
     commitments = db.ForeignKey(kind=Stewardship, repeated=True)
     name = db.String()
