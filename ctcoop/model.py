@@ -1,9 +1,22 @@
 from cantools import db, config
 from cantools.web import send_mail
-from ctuser.model import CTUser
+from ctuser.model import CTUser, Conversation
+from coopTemplates import RESCHED, UPDATE
 
 class Member(CTUser):
     roles = db.String(repeated=True)
+
+class Update(db.TimeStampedBase):
+    sender = db.ForeignKey() # CTUser, subclass (such as Member), or custom
+    subject = db.String()
+    message = db.Text()
+    conversation = db.ForeignKey(kind=Conversation)
+
+    def send(self, recipients=None):
+        recipients = recipients or Member.query().all()
+        bod = UPDATE%(self.sender.get().email, self.message)
+        for recip in recipients:
+            send_mail(to=recip.email, subject=self.subject, body=bod)
 
 class Timeslot(db.TimeStampedBase):
     schedule = db.String(choices=["once", "weekly", "daily", "exception", "offday"])
@@ -48,20 +61,6 @@ class Stewardship(db.TimeStampedBase):
 
     def afterremove(self, session):
         db.delete_multi(db.get_multi(self.timeslots, session), session)
-
-
-# TODO: put this somewhere!!!
-RESCHED = """Hello!
-
-You volunteered for this task:
-
-%s
-
-The task has been %s, so your commitment record has been removed.
-
-Please click <a href='""" + config.web.protocol + """://""" + config.web.domain + """/coop/cal.html'>here</a> to review your calendar.
-
-That's it!"""
 
 class Task(db.TimeStampedBase):
     editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
