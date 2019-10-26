@@ -1,4 +1,5 @@
 copies = {
+	".": ["coopTemplates.py"],
 	"css": ["custom.css"]
 }
 
