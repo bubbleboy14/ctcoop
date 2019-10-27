@@ -1,5 +1,10 @@
 {
-	"updates": {},
+	"updates": {
+		"parent": "ctmain",
+		"order": "-modified",
+		"subject": "",
+		"on": {}
+	},
 	"cal": {},
 	"about": {
 		"members": {
