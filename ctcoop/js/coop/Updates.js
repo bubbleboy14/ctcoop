@@ -99,7 +99,7 @@ coop.Updates = CT.Class({
 		CT.db.get("update", function(uz) {
 			oz.updates = uz;
 			thaz.build();
-		}, null, null, oz.order, oz.filters);
+		}, null, null, oz.order, oz.filts ? oz.filts() : oz.filters);
 	},
 	init: function(opts) {
 		this.opts = CT.merge(opts, core.config.ctcoop.updates);
