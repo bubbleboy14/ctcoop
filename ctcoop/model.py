@@ -1,9 +1,34 @@
 from cantools import db, config
 from cantools.web import send_mail
-from ctuser.model import CTUser
+from ctuser.model import CTUser, Conversation
+from coopTemplates import RESCHED, UPDATE
 
 class Member(CTUser):
     roles = db.String(repeated=True)
+
+# various ForeignKey()s below (sender, recipients,
+# steward, editors) require CTUser, subclass (such
+# as Member), or custom user table
+
+class Update(db.TimeStampedBase):
+    sender = db.ForeignKey()
+    subject = db.String()
+    message = db.Text()
+    recipients = db.ForeignKey(repeated=True)
+    conversation = db.ForeignKey(kind=Conversation)
+    label = "subject"
+
+    def oncreate(self):
+        convo = Conversation(topic=self.subject)
+        convo.put()
+        self.conversation = convo.key
+        if self.recipients:
+            recipients = db.get_multi(self.recipients)
+        else:
+            recipients = Member.query().all()
+        bod = UPDATE%(self.sender.get().email, self.message)
+        for recip in recipients:
+            send_mail(to=recip.email, subject=self.subject, body=bod)
 
 class Timeslot(db.TimeStampedBase):
     schedule = db.String(choices=["once", "weekly", "daily", "exception", "offday"])
@@ -33,7 +58,7 @@ class Timeslot(db.TimeStampedBase):
             slotter.put(session)
 
 class Stewardship(db.TimeStampedBase):
-    steward = db.ForeignKey() # CTUser, subclass (such as Member), or custom
+    steward = db.ForeignKey()
     timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
 
     def task(self):
@@ -49,22 +74,8 @@ class Stewardship(db.TimeStampedBase):
     def afterremove(self, session):
         db.delete_multi(db.get_multi(self.timeslots, session), session)
 
-
-# TODO: put this somewhere!!!
-RESCHED = """Hello!
-
-You volunteered for this task:
-
-%s
-
-The task has been %s, so your commitment record has been removed.
-
-Please click <a href='""" + config.web.protocol + """://""" + config.web.domain + """/coop/cal.html'>here</a> to review your calendar.
-
-That's it!"""
-
 class Task(db.TimeStampedBase):
-    editors = db.ForeignKey(repeated=True) # CTUser, subclass (such as Member), or custom
+    editors = db.ForeignKey(repeated=True)
     timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
     commitments = db.ForeignKey(kind=Stewardship, repeated=True)
     name = db.String()
