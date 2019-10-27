@@ -4,6 +4,7 @@ This package provides organizational management tools (in the form of web pages 
 # Back (Init Config)
 
     copies = {
+    	".": ["coopTemplates.py"],
     	"css": ["custom.css"]
     }
     
@@ -22,6 +23,12 @@ This package provides organizational management tools (in the form of web pages 
 ## core.config.ctcoop
 ### Import line: 'CT.require("core.config");'
     {
+    	"updates": {
+    		"parent": "ctmain",
+    		"order": "-modified",
+    		"subject": "",
+    		"on": {}
+    	},
     	"cal": {},
     	"about": {
     		"members": {
