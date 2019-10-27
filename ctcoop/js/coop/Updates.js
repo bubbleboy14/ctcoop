@@ -49,6 +49,7 @@ coop.Updates = CT.Class({
 								tlist.insertBefore(t, nextSib);
 							else
 								tlist.appendChild(t);
+							CT.data.add(up);
 							t.trigger();
 							oz.on.update && oz.on.update(up);
 						}
