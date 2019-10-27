@@ -61,7 +61,7 @@ coop.Updates = CT.Class({
 	label: function(up) {
 		var oz = this.opts;
 		if (oz.shortSub)
-			up.label = up.label.slice(oz.subject.length);
+			up.label = up.subject.slice(oz.subject.length);
 		return up;
 	},
 	single: function(up) {
