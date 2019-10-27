@@ -5,5 +5,5 @@ CT.require("coop.Updates");
 
 CT.onload(function() {
 	CT.initCore();
-	new coop.Updates(core.config.ctcoop.updates);
+	new coop.Updates();
 });

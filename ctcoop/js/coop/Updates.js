@@ -9,9 +9,11 @@ coop.Updates = CT.Class({
 	},
 	fresh: function() {
 		var _ = this._, subject = CT.dom.smartField({
+			classname: "w1",
 			blurs: _.blurs.subject
 		}), message = CT.dom.smartField({
 			isTA: true,
+			classname: "w1",
 			blurs: _.blurs.message
 		}), oz = this.opts, thaz = this;
 		CT.dom.setContent(_.content, [
@@ -79,6 +81,7 @@ coop.Updates = CT.Class({
 			}].concat(oz.updates), thaz.single);
 			_.list.classList.add("ctlist");
 			CT.dom.setContent(oz.parent, [ _.list, _.content ]);
+			_.list.firstChild.trigger();
 		});
 	},
 	load: function() {
@@ -88,14 +91,10 @@ coop.Updates = CT.Class({
 		CT.db.get("update", function(uz) {
 			oz.updates = uz;
 			thaz.build();
-		}, null, null, null, oz.filters);
+		}, null, null, oz.order, oz.filters);
 	},
 	init: function(opts) {
-		var opts = this.opts = CT.merge(opts, {
-			parent: "ctmain",
-			subject: "", // prepend to subject
-			on: {} // update()
-		});
+		this.opts = CT.merge(opts, core.config.ctcoop.updates);
 		this.load();
 	}
 });
