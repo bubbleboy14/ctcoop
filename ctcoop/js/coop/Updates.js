@@ -65,9 +65,7 @@ coop.Updates = CT.Class({
 			"From: " + CT.data.get(up.sender).email,
 			"Subject: " + up.subject,
 			up.message,
-
-			"TODO: add conversation!"
-
+			user.core.convo(up.conversation)
 		]);
 	},
 	build: function() {
