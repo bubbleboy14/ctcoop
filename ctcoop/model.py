@@ -16,6 +16,7 @@ class Update(db.TimeStampedBase):
     message = db.Text()
     recipients = db.ForeignKey(repeated=True)
     conversation = db.ForeignKey(kind=Conversation)
+    label = "subject"
 
     def oncreate(self):
         convo = Conversation(topic=self.subject)
