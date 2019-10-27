@@ -77,12 +77,14 @@ coop.Updates = CT.Class({
 	},
 	build: function() {
 		var _ = this._, oz = this.opts, thaz = this;
+		if (oz.noNew && !oz.updates.length)
+			return CT.dom.setContent(oz.parent, "oops, no updates yet!");
 		oz.updates.forEach(this.label);
 		CT.db.multi(oz.updates.map(function(up) {
 			return up.sender;
 		}), function() {
 			_.content = CT.dom.div(null, "ctcontent");
-			_.list = CT.panel.triggerList([{
+			_.list = CT.panel.triggerList(oz.noNew ? oz.updates : [{
 				label: _.newUp
 			}].concat(oz.updates), thaz.single);
 			_.list.classList.add("ctlist");
