@@ -43,7 +43,7 @@ coop.Updates = CT.Class({
 						},
 						cb: function(up) {
 							var tlist = _.list,
-								t = CT.panel.trigger(up, thaz.single),
+								t = CT.panel.trigger(thaz.label(up), thaz.single),
 								nextSib = tlist.firstChild.nextSibling;
 							if (nextSib)
 								tlist.insertBefore(t, nextSib);
@@ -58,19 +58,26 @@ coop.Updates = CT.Class({
 			], "round bordered padded")
 		]);
 	},
+	label: function(up) {
+		var oz = this.opts;
+		if (oz.shortSub)
+			up.label = up.label.slice(oz.subject.length);
+		return up;
+	},
 	single: function(up) {
 		var _ = this._;
 		if (up.label == _.newUp)
 			return this.fresh();
 		CT.dom.setContent(_.content, [
 			CT.dom.div("From: <b>" + CT.data.get(up.sender).email + "</b>", "right"),
-			CT.dom.div(up.subject, "biggest bold pb10"),
+			CT.dom.div(up.label, "biggest bold pb10"),
 			up.message.replace(/\n/g, "<br>"),
 			user.core.convo(up.conversation)
 		]);
 	},
 	build: function() {
 		var _ = this._, oz = this.opts, thaz = this;
+		oz.updates.forEach(this.label);
 		CT.db.multi(oz.updates.map(function(up) {
 			return up.sender;
 		}), function() {
