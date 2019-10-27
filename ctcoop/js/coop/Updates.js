@@ -17,7 +17,7 @@ coop.Updates = CT.Class({
 			blurs: _.blurs.message
 		}), oz = this.opts, thaz = this;
 		CT.dom.setContent(_.content, [
-			CT.dom.div("New Update", "biggest bold pv10"),
+			CT.dom.div("New Update", "biggest bold pb10"),
 			CT.dom.div([
 				CT.dom.div("subject", "bigger"),
 				subject,
@@ -62,9 +62,9 @@ coop.Updates = CT.Class({
 		if (up.label == _.newUp)
 			return this.fresh();
 		CT.dom.setContent(_.content, [
-			"From: " + CT.data.get(up.sender).email,
-			"Subject: " + up.subject,
-			up.message,
+			CT.dom.div("From: <b>" + CT.data.get(up.sender).email + "</b>", "right"),
+			CT.dom.div(up.subject, "biggest bold pb10"),
+			up.message.replace(/\n/g, "<br>"),
 			user.core.convo(up.conversation)
 		]);
 	},
