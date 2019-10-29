@@ -64,6 +64,14 @@ class Stewardship(db.TimeStampedBase):
     def task(self):
         return Task.query(Task.commitments.contains(self.key.urlsafe())).get()
 
+    def happening(self, now):
+        slots = []
+        if self.task().happening(now):
+            for slot in db.get_multi(self.timeslots):
+                if isDay(slot, now):
+                    slots.append(slot)
+        return len(slots) is 1 # if 2, one is exception
+
     def beforeremove(self, session):
         task = self.task()
         if task: # no task is task is deleting itself...
@@ -74,6 +82,15 @@ class Stewardship(db.TimeStampedBase):
     def afterremove(self, session):
         db.delete_multi(db.get_multi(self.timeslots, session), session)
 
+def isDay(slot, now):
+    sched = slot.schedule
+    if sched == "daily":
+        return True
+    elif sched == "weekly" or sched == "offday":
+        return slot.when.weekday() == now.weekday()
+    elif sched == "once" or sched == "exception":
+        return slot.when.date() == now.date()
+
 class Task(db.TimeStampedBase):
     editors = db.ForeignKey(repeated=True)
     timeslots = db.ForeignKey(kind=Timeslot, repeated=True)
@@ -83,6 +100,13 @@ class Task(db.TimeStampedBase):
     mode = db.String() # arbitrary
     requirements = db.String(repeated=True)
     steps = db.String(repeated=True)
+
+    def happening(self, now):
+        slots = []
+        for slot in db.get_multi(self.timeslots):
+            if isDay(slot, now):
+                slots.append(slot)
+        return len(slots) is 1 # if 2, one is exception
 
     def unsteward(self, stewardship, verb="rescheduled"): # just a notifier
         send_mail(to=stewardship.steward.get().email,
