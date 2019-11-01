@@ -70,7 +70,8 @@ class Stewardship(db.TimeStampedBase):
             for slot in db.get_multi(self.timeslots):
                 if isDay(slot, now):
                     slots.append(slot)
-        return len(slots) is 1 # if 2, one is exception
+        if len(slots) is 1: # if 2, one is exception
+            return slots[0]
 
     def beforeremove(self, session):
         task = self.task()
@@ -106,7 +107,8 @@ class Task(db.TimeStampedBase):
         for slot in db.get_multi(self.timeslots):
             if isDay(slot, now):
                 slots.append(slot)
-        return len(slots) is 1 # if 2, one is exception
+        if len(slots) is 1: # if 2, one is exception
+            return slots[0]
 
     def unsteward(self, stewardship, verb="rescheduled"): # just a notifier
         send_mail(to=stewardship.steward.get().email,
