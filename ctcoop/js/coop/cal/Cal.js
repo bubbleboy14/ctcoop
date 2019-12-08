@@ -236,6 +236,7 @@ coop.cal.Cal = CT.Class({
 				CT.modal.prompt({
 					prompt: "how many hours does it last?",
 					style: "number",
+					max: 24,
 					cb: function(duration) {
 						slot(task, schedule, when, duration);
 					}

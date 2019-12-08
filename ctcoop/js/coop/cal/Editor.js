@@ -48,7 +48,7 @@ coop.cal.Editor = CT.Class({
 				tshow,
 				CT.dom.range(function(val) {
 					CT.dom.setContent(tshow, val);
-				}, 0.25, 5, slot.duration, 0.25, null, null, function(val) {
+				}, 0.25, 24, slot.duration, 0.25, null, null, function(val) {
 					slot.duration = val;
 					coop.cal.util.edit({
 						key: slot.key,
