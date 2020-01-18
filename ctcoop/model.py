@@ -1,3 +1,4 @@
+from math import ceil
 from cantools import db, config
 from cantools.web import send_mail
 from ctuser.model import CTUser, Conversation
@@ -31,7 +32,8 @@ class Update(db.TimeStampedBase):
             send_mail(to=recip.email, subject=self.subject, body=bod)
 
 class Timeslot(db.TimeStampedBase):
-    schedule = db.String(choices=["once", "weekly", "daily", "exception", "offday"])
+    schedule = db.String(choices=["once", "weekly", "daily", "exception",
+        "offday", "monthly (date)", "monthly (day)"])
     when = db.DateTime()
     duration = db.Float() # hours
 
@@ -85,12 +87,17 @@ class Stewardship(db.TimeStampedBase):
 
 def isDay(slot, now):
     sched = slot.schedule
+    when = slot.when
     if sched == "daily":
         return True
     elif sched == "weekly" or sched == "offday":
-        return slot.when.weekday() == now.weekday()
+        return when.weekday() == now.weekday()
     elif sched == "once" or sched == "exception":
-        return slot.when.date() == now.date()
+        return when.date() == now.date()
+    elif sched == "monthly (date)":
+        return when.day == now.day
+    elif sched == "monthly (day)":
+        return when.weekday() == now.weekday() and ceil(when.day / 7.0) == ceil(now.day / 7.0)
 
 class Task(db.TimeStampedBase):
     editors = db.ForeignKey(repeated=True)

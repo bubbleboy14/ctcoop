@@ -74,9 +74,25 @@ coop.cal.Cal = CT.Class({
 	},
 	click: {
 		once: function(date, month, year) {
-			var tslot = this.timeslot;
-			this.task(function(task) {
-				tslot(task, "once", new Date(year, month, date));
+			var thaz = this, slotter = function(variety) {
+				thaz.task(function(task) {
+					thaz.timeslot(task, variety, new Date(year, month, date));
+				});
+			};
+			CT.modal.prompt({
+				style: "single-choice",
+				data: ["once", "monthly"],
+				cb: function(variety) {
+					if (variety == "once")
+						return slotter(variety);
+					CT.modal.prompt({
+						style: "single-choice",
+						data: ["date", "day"],
+						cb: function(subvar) {
+							slotter(variety + " (" + subvar + ")");
+						}
+					});
+				}
 			});
 		},
 		weekly: function(day, dayindex) {
@@ -104,7 +120,9 @@ coop.cal.Cal = CT.Class({
 			}, buttz = [ vbutt("once") ], eslots;
 			if (slot.schedule == "daily")
 				buttz.push(vbutt("daily"));
-			if (slot.schedule != "once") {
+			if (slot.schedule.startsWith("monthly"))
+				buttz.push(vbutt(slot.schedule));
+			else if (slot.schedule != "once") {
 				buttz.push(vbutt("weekly"));
 				if (slots.length) {
 					eslots = this._.eslots(slots[0].task, function(ex) {
@@ -142,7 +160,7 @@ coop.cal.Cal = CT.Class({
 			var steps = this.opts.nonew ? [] : [
 				"Click the 'daily task' button to create a new daily task",
 				"Click a day name to set up a weekly task.",
-				"Click a date to set up a non-recurring task."
+				"Click a date to set up a monthly or non-recurring task."
 			];
 			steps.push("Click a timeslot to edit or participate.");
 			CT.modal.modal([

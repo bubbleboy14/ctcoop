@@ -78,7 +78,7 @@ coop.cal.Editor = CT.Class({
 			CT.dom.div([
 				"what kind of schedule?",
 				CT.dom.select({
-					names: ["once", "weekly", "daily"],
+					names: ["once", "weekly", "daily", "monthly (date)", "monthly (day)"],
 					curvalue: slot.schedule,
 					onchange: function(val) {
 						coop.cal.util.edit({
