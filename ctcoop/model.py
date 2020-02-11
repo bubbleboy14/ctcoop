@@ -56,7 +56,7 @@ class Timeslot(db.TimeStampedBase):
     def beforeremove(self, session):
         slotter = self.slotter()
         if slotter: # no slotter if slotter is deleting itself....
-            slotter.timeslots = filter(lambda x : x != self.key, slotter.timeslots)
+            slotter.timeslots = list(filter(lambda x : x != self.key, slotter.timeslots))
             slotter.put(session)
 
 class Stewardship(db.TimeStampedBase):
@@ -79,7 +79,7 @@ class Stewardship(db.TimeStampedBase):
         task = self.task()
         if task: # no task is task is deleting itself...
             task.unsteward(self)
-            task.commitments = filter(lambda x : x != self.key, task.commitments)
+            task.commitments = list(filter(lambda x : x != self.key, task.commitments))
             task.put(session)
 
     def afterremove(self, session):
