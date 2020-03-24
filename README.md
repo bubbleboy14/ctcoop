@@ -3,8 +3,8 @@ This package provides organizational management tools (in the form of web pages 
 
 # Back (Init Config)
 
+    templates = "coopTemplates.py"
     copies = {
-    	".": ["coopTemplates.py"],
     	"css": ["custom.css"]
     }
     
@@ -17,6 +17,7 @@ This package provides organizational management tools (in the form of web pages 
     	"ctcoop.model": ["*"]
     }
     requires = ["ctdecide"]
+    
 
 # Front (JS Config)
 
