@@ -50,7 +50,7 @@
 			"phone_or_email": "please enter a phone # or email",
 			"form": "please enter your name, as well as your phone # and/or email"
 		},
-		"fnames": ['name', 'phone', 'email', 'address'],
+		"fnames": ["name", "phone", "email", "address"],
 		"carriers": ["at&t", "verizon", "tmobile", "sprint"]
 	},
 	"offerings": {
