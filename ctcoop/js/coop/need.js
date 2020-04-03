@@ -104,7 +104,7 @@ coop.need = {
 				if (!data.description)
 					return alert(reflections[ftype].please);
 				if (!data.phone && !data.email)
-					return alert("please enter a phone # or email");
+					return alert(cfg.prompts.phone_or_email);
 				CT.net.post({
 					path: "/_coop",
 					params: {
