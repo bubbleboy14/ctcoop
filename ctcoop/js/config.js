@@ -34,7 +34,7 @@
 				"prompt": "Please describe what you need assistance with",
 				"description": ["what do you need help with?", "how can we assist you?"]
 			},
-			"resource": {
+			"offering": {
 				"closed": "that's it!",
 				"follow": "thanks! you're the best!",
 				"please": "please describe the resource",
