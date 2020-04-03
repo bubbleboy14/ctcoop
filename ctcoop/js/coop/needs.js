@@ -1,4 +1,4 @@
-var cfg = core.config.ctcomp.needs, reflections = cfg.reflections;
+var cfg = core.config.ctcoop.needs, reflections = cfg.reflections;
 
 coop.needs = {
 	gallery: function(gtype) {
