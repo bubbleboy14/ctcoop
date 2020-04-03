@@ -1,6 +1,6 @@
 var cfg = core.config.ctcomp.needs, reflections = cfg.reflections;
 
-coop.need = {
+coop.needs = {
 	gallery: function(gtype) {
 		CT.db.get(gtype, function(needs) {
 			CT.dom.addContent(document.body, needs.map(function(n) {
