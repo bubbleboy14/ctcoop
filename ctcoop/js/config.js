@@ -42,6 +42,14 @@
 				"description": ["what would you like to offer?", "please describe your offering"]
 			}
 		},
+		"prompts": {
+			"save": "your acceptance of this request will remove it from this message board. how would you like to save this information?",
+			"carrier": "please select your carrier",
+			"phone": "please enter your phone number",
+			"email": "please enter your email address",
+			"phone_or_email": "please enter a phone # or email",
+			"form": "please enter your name, as well as your phone # and/or email"
+		},
 		"fnames": ['name', 'phone', 'email', 'address'],
 		"carriers": ["at&t", "verizon", "tmobile", "sprint"]
 	},

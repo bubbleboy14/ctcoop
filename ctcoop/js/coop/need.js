@@ -30,7 +30,7 @@ coop.need = {
 						CT.dom.div(details, "pv10"),
 						(n.closed || gtype == "offering") ? reflections[gtype].closed : CT.dom.button("i'll do it", function() {
 							CT.modal.choice({
-								prompt: "your acceptance of this request will remove it from this message board. how would you like to save this information? supported sms carriers: " + cfg.carriers.join(", "),
+								prompt: cfg.prompts.save + " supported sms carriers: " + cfg.carriers.join(", "),
 								data: ["text message", "email", "i'll write it down myself"],
 								cb: function(reminder) {
 									var params = {
@@ -40,13 +40,13 @@ coop.need = {
 									};
 									if (reminder == "text message") {
 										CT.modal.choice({
-											prompt: "please select your carrier",
+											prompt: cfg.prompts.carrier,
 											data: cfg.carriers,
 											cb: function(carrier) {
 												params.carrier = carrier;
 												CT.modal.prompt({
 													style: "phone",
-													prompt: "please enter your phone number",
+													prompt: cfg.prompts.phone,
 													cb: function(number) {
 														params.number = number;
 														doit(params);
@@ -57,7 +57,7 @@ coop.need = {
 									} else if (reminder == "email") {
 										CT.modal.prompt({
 											style: "email",
-											prompt: "please enter your email address",
+											prompt: cfg.prompts.email,
 											cb: function(email) {
 												params.email = email;
 												doit(params);
@@ -82,7 +82,7 @@ coop.need = {
 			blurs: reflections[ftype].description
 		});
 		var mod = CT.modal.modal([
-			"please enter your name, as well as your phone # and/or email so we can contact you",
+			cfg.prompts.form,
 			cfg.fnames.map(function(fname) {
 				fieldz[fname] = CT.dom.smartField({
 					blurs: cfg.blurz[fname],
