@@ -3,7 +3,7 @@ var cfg = core.config.ctcoop.needs, reflections = cfg.reflections;
 coop.needs = {
 	gallery: function(gtype) {
 		CT.db.get(gtype, function(needs) {
-			CT.dom.addContent(document.body, needs.map(function(n) {
+			CT.dom.addContent("ctmain", needs.map(function(n) {
 				var cname = "big bordered padded margined round pointer inline-block";
 				if (n.closed)
 					cname += " closed";
