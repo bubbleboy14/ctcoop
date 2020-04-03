@@ -5,7 +5,7 @@ def response():
 	action = cgi_get("action")
 	if action == "need":
 		Need(**cgi_get("data")).put()
-	elif action == "resource":
+	elif action == "offering":
 		Offering(**cgi_get("data")).put()
 	elif action == "do":
 		need = db.get(cgi_get("need"))
