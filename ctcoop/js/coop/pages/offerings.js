@@ -13,7 +13,7 @@ var doit = function() {
 
 CT.onload(function() {
 	CT.initCore();
-	cfg.passord ? CT.modal.prompt({
+	cfg.password ? CT.modal.prompt({
 		style: "password",
 		prompt: "password?",
 		cb: function(pw) {
