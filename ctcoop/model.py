@@ -7,9 +7,24 @@ from coopTemplates import RESCHED, UPDATE
 class Member(CTUser):
     roles = db.String(repeated=True)
 
-# various ForeignKey()s below (sender, recipients,
-# steward, editors) require CTUser, subclass (such
-# as Member), or custom user table
+# various ForeignKey()s below (member, sender,
+# recipients, steward, editors) require CTUser,
+# subclass (such as Member), or custom user table
+
+class Contactable(db.TimeStampedBase):
+    member = db.ForeignKey()
+    name = db.String()
+    email = db.String()
+    phone = db.String()
+    address = db.String()
+    description = db.Text() # only required field
+    closed = db.Boolean(default=False)
+
+class Need(Contactable):
+    pass
+
+class Offering(Contactable):
+    pass
 
 class Update(db.TimeStampedBase):
     sender = db.ForeignKey()
