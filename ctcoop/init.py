@@ -4,7 +4,7 @@ copies = {
 }
 
 syms = {
-	".": ["_coop.py"]
+	".": ["_coop.py"],
 	"js": ["coop"],
 	"css": ["coop.css"],
 	"html": ["coop"]
