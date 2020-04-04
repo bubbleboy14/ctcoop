@@ -1,7 +1,7 @@
-var cfg = core.config.ctcoop.needs, reflections = cfg.reflections;
-
 coop.needs = {
 	gallery: function(gtype) {
+		var cfg = core.config.ctcoop.needs,
+			reflections = cfg.reflections;
 		CT.db.get(gtype, function(needs) {
 			CT.dom.addContent("ctmain", needs.length ? needs.map(function(n) {
 				var cname = "big bordered padded margined round pointer inline-block";
@@ -75,7 +75,9 @@ coop.needs = {
 		});
 	},
 	form: function(ftype) {
-		var fieldz = {}, f, data = {};
+		var cfg = core.config.ctcoop.needs,
+			reflections = cfg.reflections,
+			fieldz = {}, f, data = {};
 		fieldz.description = CT.dom.smartField({
 			isTA: true,
 			classname: "w1",
