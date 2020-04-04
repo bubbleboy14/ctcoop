@@ -77,24 +77,27 @@ coop.needs = {
 	form: function(ftype) {
 		var cfg = core.config.ctcoop.needs,
 			reflections = cfg.reflections,
-			fieldz = {}, f, data = {};
+			fieldz = {}, f, data = {},
+			u = user.core.get("key");
 		fieldz.description = CT.dom.smartField({
 			isTA: true,
 			classname: "w1",
 			blurs: reflections[ftype].description
 		});
 		var mod = CT.modal.modal([
-			cfg.prompts.form,
-			cfg.fnames.map(function(fname) {
-				fieldz[fname] = CT.dom.smartField({
-					blurs: cfg.blurz[fname],
-					classname: "w1"
-				});
-				return CT.dom.div([
-					CT.parse.capitalize(fname),
-					fieldz[fname]
-				], "bordered padded margined round");
-			}),
+			!u && [
+				cfg.prompts.form,
+				cfg.fnames.map(function(fname) {
+					fieldz[fname] = CT.dom.smartField({
+						blurs: cfg.blurz[fname],
+						classname: "w1"
+					});
+					return CT.dom.div([
+						CT.parse.capitalize(fname),
+						fieldz[fname]
+					], "bordered padded margined round");
+				})
+			],
 			reflections[ftype].prompt,
 			CT.dom.div([
 				"Description",
@@ -105,7 +108,9 @@ coop.needs = {
 					data[f] = fieldz[f].fieldValue();
 				if (!data.description)
 					return alert(reflections[ftype].please);
-				if (!data.phone && !data.email)
+				if (u)
+					data.member = u;
+				else if (!data.phone && !data.email)
 					return alert(cfg.prompts.phone_or_email);
 				CT.net.post({
 					path: "/_coop",
