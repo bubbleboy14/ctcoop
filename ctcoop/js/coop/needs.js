@@ -71,7 +71,7 @@ coop.needs = {
 					]);
 				};
 				return dnode;
-			}) : "no " + gtype + "s :'(");
+			}) : CT.dom.div("no " + gtype + "s :'("));
 		});
 	},
 	form: function(ftype) {
