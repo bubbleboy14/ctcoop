@@ -11,7 +11,12 @@ class Member(CTUser):
 # recipients, steward, editors) require CTUser,
 # subclass (such as Member), or custom user table
 
+class Tag(db.TimeStampedBase):
+    name = db.String()
+    # helpful especially for providing tagging options
+
 class Contactable(db.TimeStampedBase):
+    tags = db.ForeignKey(kind=Tag, repeated=True)
     member = db.ForeignKey()
     name = db.String()
     email = db.String()
