@@ -165,9 +165,9 @@ coop.needs = {
 		pnode = pnode || "ctmain";
 		cfg.gal.nobutts || CT.dom.setContent(pnode,
 			CT.dom.button(refs.button, function() {
-				coop.needs.form(gtype);
+				coop.needs.form(opposite);
 			}, "abs ctr")
 		);
-		coop.needs.galleries(opposite, pnode);
+		coop.needs.galleries(gtype, pnode);
 	}
 };
