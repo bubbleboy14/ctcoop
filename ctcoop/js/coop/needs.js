@@ -1,78 +1,110 @@
 coop.needs = {
-	gallery: function(gtype) {
+	item: function(n, gtype) {
 		var cfg = core.config.ctcoop.needs,
-			reflections = cfg.reflections;
-		CT.db.get(gtype, function(needs) {
-			CT.dom.addContent("ctmain", needs.length ? needs.map(function(n) {
-				var cname = "big bordered padded margined round pointer inline-block";
-				if (n.closed)
-					cname += " closed";
-				var dnode = CT.dom.div(n.description, cname);
-				dnode.onclick = function() {
-					var doit = function(params) {
-						CT.net.post({
-							path: "/_coop",
-							params: params,
-							cb: function() {
-								alert("you did it! now do it.");
-								dnode.classList.add("closed");
-								modal.hide();
-							}
-						});
-					};
-					var details = [];
-					["name", "email", "phone", "address"].forEach(function(key) {
-						if (n[key])
-							details.push(key + ": " + n[key]);
-					});
-					var modal = CT.modal.modal([
-						n.description,
-						CT.dom.div(details, "pv10"),
-						(n.closed || gtype == "offering") ? reflections[gtype].closed : CT.dom.button("i'll do it", function() {
-							CT.modal.choice({
-								prompt: cfg.prompts.save + " supported sms carriers: " + cfg.carriers.join(", "),
-								data: ["text message", "email", "i'll write it down myself"],
-								cb: function(reminder) {
-									var params = {
-										action: "do",
-										need: n.key,
-										reminder: reminder
-									};
-									if (reminder == "text message") {
-										CT.modal.choice({
-											prompt: cfg.prompts.carrier,
-											data: cfg.carriers,
-											cb: function(carrier) {
-												params.carrier = carrier;
-												CT.modal.prompt({
-													style: "phone",
-													prompt: cfg.prompts.phone,
-													cb: function(number) {
-														params.number = number;
-														doit(params);
-													}
-												});
-											}
-										});
-									} else if (reminder == "email") {
+			reflections = cfg.reflections,
+			cname = "big bordered padded margined round pointer inline-block";
+		if (n.closed)
+			cname += " closed";
+		var dnode = CT.dom.div(n.description, cname);
+		dnode.onclick = function() {
+			var doit = function(params) {
+				CT.net.post({
+					path: "/_coop",
+					params: params,
+					cb: function() {
+						alert("you did it! now do it.");
+						dnode.classList.add("closed");
+						modal.hide();
+					}
+				});
+			};
+			var details = [];
+			["name", "email", "phone", "address"].forEach(function(key) {
+				if (n[key])
+					details.push(key + ": " + n[key]);
+			});
+			var modal = CT.modal.modal([
+				n.description,
+				CT.dom.div(details, "pv10"),
+				(n.closed || gtype == "offering") ? reflections[gtype].closed : CT.dom.button("i'll do it", function() {
+					CT.modal.choice({
+						prompt: cfg.prompts.save + " supported sms carriers: " + cfg.carriers.join(", "),
+						data: ["text message", "email", "i'll write it down myself"],
+						cb: function(reminder) {
+							var params = {
+								action: "do",
+								need: n.key,
+								reminder: reminder
+							};
+							if (reminder == "text message") {
+								CT.modal.choice({
+									prompt: cfg.prompts.carrier,
+									data: cfg.carriers,
+									cb: function(carrier) {
+										params.carrier = carrier;
 										CT.modal.prompt({
-											style: "email",
-											prompt: cfg.prompts.email,
-											cb: function(email) {
-												params.email = email;
+											style: "phone",
+											prompt: cfg.prompts.phone,
+											cb: function(number) {
+												params.number = number;
 												doit(params);
 											}
 										});
-									} else
+									}
+								});
+							} else if (reminder == "email") {
+								CT.modal.prompt({
+									style: "email",
+									prompt: cfg.prompts.email,
+									cb: function(email) {
+										params.email = email;
 										doit(params);
-								}
-							});
-						})
-					]);
-				};
-				return dnode;
-			}) : CT.dom.div("no " + gtype + "s :'("));
-		});
+									}
+								});
+							} else
+								doit(params);
+						}
+					});
+				})
+			]);
+		};
+		return dnode;
+	},
+	items: function(needs, gtype, pnode) {
+		CT.dom.addContent(pnode, needs.length ? needs.map(function(n) {
+			return coop.needs.item(n, gtype);
+		}) : CT.dom.div("no " + gtype + "s :'("));
+	},
+	gallery: function(gtype, pnode, items) {
+		var cfg = core.config.ctcoop.needs, gal = function(needs) {
+			coop.needs.items(needs, gtype, pnode);
+		};
+		items ? gal(items) : (cfg.gal.items || CT.db.get)(gtype, gal);
+	},
+	galleries: function(gtype, pnode) {
+		var cfg = core.config.ctcoop.needs, plur = gtype + "s";
+		if (cfg.gal.sets) {
+			cfg.gal.sets(gtype, function(sets) {
+				var full = [];
+				sets.forEach(function(gset) {
+					full = full.concat(gset[plur]);
+				});
+				CT.db.multi(full, function() {
+					sets.forEach(function(gset) {
+						var items = gset[plur].map(function(ikey) {
+							return CT.data.get(ikey);
+						});
+						if (items.length) {
+							var n = CT.dom.div(CT.dom.div(gset.name, "biggest"),
+								"bordered padded margined round centered");
+							coop.needs.items(items, gtype, n);
+							CT.dom.addContent(pnode, n);
+						}
+					});
+				});
+			});
+		} else
+			coop.needs.gallery(gtype, pnode);
 	},
 	form: function(ftype) {
 		var cfg = core.config.ctcoop.needs,
@@ -125,5 +157,17 @@ coop.needs = {
 				});
 			})
 		]);
+	},
+	init: function(gtype, pnode) {
+		var cfg = core.config.ctcoop.needs,
+			refs = cfg.reflections[gtype],
+			opposite = refs.reflection;
+		pnode = pnode || "ctmain";
+		cfg.gal.nobutts || CT.dom.setContent(pnode,
+			CT.dom.button(refs.button, function() {
+				coop.needs.form(gtype);
+			}, "abs ctr")
+		);
+		coop.needs.galleries(opposite, pnode);
 	}
 };
