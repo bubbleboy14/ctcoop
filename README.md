@@ -49,6 +49,11 @@ This package provides organizational management tools (in the form of web pages 
     		"filters": {}
     	},
     	"needs": {
+    		"gal": {
+    			"nobutts": false,
+    			"items": null,
+    			"sets": null
+    		},
     		"blurz": {
     			"phone": ["what's your phone number?", "phone # please"],
     			"email": ["what's your email address?", "email address please"],
@@ -57,6 +62,8 @@ This package provides organizational management tools (in the form of web pages 
     		},
     		"reflections": {
     			"need": {
+    				"reflection": "offering",
+    				"button": "need something else?",
     				"closed": "someone is doing it!",
     				"follow": "thanks! we'll follow up :)",
     				"please": "please tell us what you need",
@@ -64,6 +71,8 @@ This package provides organizational management tools (in the form of web pages 
     				"description": ["what do you need help with?", "how can we assist you?"]
     			},
     			"offering": {
+    				"reflection": "need",
+    				"button": "want to offer something else?",
     				"closed": "that's it!",
     				"follow": "thanks! you're the best!",
     				"please": "please describe the resource",
