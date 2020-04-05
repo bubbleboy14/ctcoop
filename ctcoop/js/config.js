@@ -34,6 +34,7 @@
 		"reflections": {
 			"need": {
 				"reflection": "offering",
+				"doit": "i'll do it",
 				"button": "need something else?",
 				"closed": "someone is doing it!",
 				"follow": "thanks! we'll follow up :)",
@@ -43,6 +44,7 @@
 			},
 			"offering": {
 				"reflection": "need",
+				"doit": "yes please!",
 				"button": "want to offer something else?",
 				"closed": "that's it!",
 				"follow": "thanks! you're the best!",
