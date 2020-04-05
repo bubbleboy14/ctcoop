@@ -8,7 +8,7 @@ def response():
 	elif action == "offering":
 		Offering(**cgi_get("data")).put()
 	elif action == "do":
-		need = db.get(cgi_get("need"))
+		need = db.get(cgi_get("need")) # need or offering....
 		reminder = cgi_get("reminder")
 		task = [need.description]
 		for item in ["name", "email", "phone", "address"]:
@@ -21,6 +21,9 @@ def response():
 				cgi_get("carrier"))
 		elif reminder == "email":
 			send_mail(to=cgi_get("email"),
+				subject="do this thing", body=task)
+		elif reminder == "member":
+			send_mail(to=db.get(cgi_get("member")).email,
 				subject="do this thing", body=task)
 		need.closed = True
 		need.put()
