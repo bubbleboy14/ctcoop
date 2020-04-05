@@ -1,7 +1,7 @@
 coop.needs = {
 	item: function(n, gtype) {
 		var cfg = core.config.ctcoop.needs,
-			reflections = cfg.reflections[gtype],
+			reflections = cfg.reflections[gtype], u = user.core.get(),
 			cname = "big bordered padded margined round pointer inline-block";
 		if (n.closed)
 			cname += " closed";
@@ -18,8 +18,11 @@ coop.needs = {
 					}
 				});
 			};
-			var details = [];
-			["name", "email", "phone", "address"].forEach(function(key) {
+			var params = {
+				action: "do",
+				need: n.key
+			}, details = [];
+			cfg.fnames.forEach(function(key) {
 				if (n[key])
 					details.push(key + ": " + n[key]);
 			});
@@ -27,15 +30,14 @@ coop.needs = {
 				n.description,
 				CT.dom.div(details, "pv10"),
 				n.closed ? reflections.closed : CT.dom.button(reflections.doit, function() {
-					CT.modal.choice({
+					u ? doit(CT.merge(params, {
+						reminder: "member",
+						member: u.key
+					})) : CT.modal.choice({
 						prompt: cfg.prompts.save + " supported sms carriers: " + cfg.carriers.join(", "),
 						data: ["text message", "email", "i'll write it down myself"],
 						cb: function(reminder) {
-							var params = {
-								action: "do",
-								need: n.key,
-								reminder: reminder
-							};
+							params.reminder = reminder;
 							if (reminder == "text message") {
 								CT.modal.choice({
 									prompt: cfg.prompts.carrier,
