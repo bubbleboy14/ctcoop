@@ -1,7 +1,7 @@
 coop.needs = {
 	item: function(n, gtype) {
 		var cfg = core.config.ctcoop.needs,
-			reflections = cfg.reflections,
+			reflections = cfg.reflections[gtype],
 			cname = "big bordered padded margined round pointer inline-block";
 		if (n.closed)
 			cname += " closed";
@@ -26,7 +26,7 @@ coop.needs = {
 			var modal = CT.modal.modal([
 				n.description,
 				CT.dom.div(details, "pv10"),
-				(n.closed || gtype == "offering") ? reflections[gtype].closed : CT.dom.button("i'll do it", function() {
+				n.closed ? reflections.closed : CT.dom.button(reflections.doit, function() {
 					CT.modal.choice({
 						prompt: cfg.prompts.save + " supported sms carriers: " + cfg.carriers.join(", "),
 						data: ["text message", "email", "i'll write it down myself"],
@@ -108,13 +108,13 @@ coop.needs = {
 	},
 	form: function(ftype) {
 		var cfg = core.config.ctcoop.needs,
-			reflections = cfg.reflections,
+			reflections = cfg.reflections[ftype],
 			fieldz = {}, f, data = {},
 			u = user.core.get("key");
 		fieldz.description = CT.dom.smartField({
 			isTA: true,
 			classname: "w1",
-			blurs: reflections[ftype].description
+			blurs: reflections.description
 		});
 		var mod = CT.modal.modal([
 			!u && [
@@ -130,7 +130,7 @@ coop.needs = {
 					], "bordered padded margined round");
 				})
 			],
-			reflections[ftype].prompt,
+			reflections.prompt,
 			CT.dom.div([
 				"Description",
 				fieldz.description
@@ -139,7 +139,7 @@ coop.needs = {
 				for (f in fieldz)
 					data[f] = fieldz[f].fieldValue();
 				if (!data.description)
-					return alert(reflections[ftype].please);
+					return alert(reflections.please);
 				if (u)
 					data.member = u;
 				else if (!data.phone && !data.email)
@@ -151,7 +151,7 @@ coop.needs = {
 						data: data
 					},
 					cb: function() {
-						alert(reflections[ftype].follow);
+						alert(reflections.follow);
 						mod.hide();
 					}
 				});
