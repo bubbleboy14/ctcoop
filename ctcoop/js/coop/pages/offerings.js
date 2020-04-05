@@ -4,12 +4,6 @@ CT.require("user.core");
 CT.require("coop.needs");
 
 var cfg = core.config.ctcoop.offerings;
-var doit = function() {
-	CT.dom.setContent("ctmain", CT.dom.button("want to offer something else?", function() {
-		coop.needs.form("offering");
-	}, "abs ctr"));
-	coop.needs.gallery("need");
-};
 
 CT.onload(function() {
 	CT.initCore();
@@ -20,7 +14,7 @@ CT.onload(function() {
 			if (pw != cfg.password)
 				location = "/";
 			else 
-				doit();
+				coop.needs.init("offering");
 		}
-	}) : doit();
+	}) : coop.needs.init("offering");
 });
