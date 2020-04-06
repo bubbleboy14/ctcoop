@@ -15,7 +15,11 @@ def response():
 			val = getattr(need, item)
 			if val:
 				task.append("%s: %s"%(item, val))
-		task = "you agreed to do this:\n\n%s"%("\n\n".join(task),)
+		if need.member:
+			nmem = need.member.get()
+			task.append("name: %s"%(nmem.firstName,))
+			task.append("email: %s"%(nmem.email,))
+		task = "you agreed to do this:\n\n%s\n\nplease follow up!"%("\n\n".join(task),)
 		if reminder == "text message":
 			send_sms(cgi_get("number"), "do this thing", task,
 				cgi_get("carrier"))
