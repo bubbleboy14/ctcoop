@@ -23,8 +23,9 @@ def response():
 			send_mail(to=cgi_get("email"),
 				subject="do this thing", body=task)
 		elif reminder == "member":
-			send_mail(to=db.get(cgi_get("member")).email,
-				subject="do this thing", body=task)
+			mem = db.get(cgi_get("member"))
+			send_mail(to=mem.email, subject="do this thing", body=task)
+			mem.help_match(need)
 		need.closed = True
 		need.put()
 
