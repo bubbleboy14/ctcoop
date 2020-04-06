@@ -9,7 +9,8 @@ def response():
 		Offering(**cgi_get("data")).put()
 	elif action == "do":
 		need = db.get(cgi_get("need")) # need or offering....
-		memkey = cgi_get("member")
+		memkey = cgi_get("member", required=False)
+		reminder = cgi_get("reminder", required=False)
 		task = [need.description]
 		if need.member:
 			if need.member.urlsafe() == memkey: # same user - close item and abort
@@ -24,7 +25,6 @@ def response():
 			if val:
 				task.append("%s: %s"%(item, val))
 		task = "you agreed to do this:\n\n%s\n\nplease follow up!"%("\n\n".join(task),)
-		reminder = cgi_get("reminder")
 		if reminder == "text message":
 			send_sms(cgi_get("number"), "do this thing", task,
 				cgi_get("carrier"))
