@@ -27,6 +27,7 @@ class Contactable(db.TimeStampedBase):
     address = db.String()
     description = db.Text() # only required field
     closed = db.Boolean(default=False)
+    ongoing = db.Boolean(default=False)
 
 class Need(Contactable):
     pass
