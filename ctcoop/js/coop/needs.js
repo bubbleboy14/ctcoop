@@ -91,7 +91,7 @@ coop.needs = {
 				sets.forEach(function(gset) {
 					full = full.concat(gset[plur]);
 				});
-				CT.db.multi(full, function() {
+				full.length ? CT.db.multi(full, function() {
 					sets.forEach(function(gset) {
 						var items = gset[plur].map(function(ikey) {
 							return CT.data.get(ikey);
@@ -103,7 +103,7 @@ coop.needs = {
 							CT.dom.addContent(pnode, n);
 						}
 					});
-				});
+				}) : CT.dom.addContent(pnode, "nothing yet!");
 			});
 		} else
 			coop.needs.gallery(gtype, pnode);
