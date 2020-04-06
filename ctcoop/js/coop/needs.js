@@ -13,7 +13,7 @@ coop.needs = {
 					params: params,
 					cb: function() {
 						alert("you did it! now do it.");
-						dnode.classList.add("closed");
+						n.ongoing || dnode.classList.add("closed");
 						modal.hide();
 					}
 				});
@@ -26,6 +26,7 @@ coop.needs = {
 				if (n[key])
 					details.push(key + ": " + n[key]);
 			});
+			details.push("ongoing: " + n.ongoing);
 			var modal = CT.modal.modal([
 				n.description,
 				CT.dom.div(details, "pv10"),
@@ -112,7 +113,8 @@ coop.needs = {
 		var cfg = core.config.ctcoop.needs,
 			reflections = cfg.reflections[ftype],
 			fieldz = {}, f, data = {},
-			u = user.core.get("key");
+			u = user.core.get("key"),
+			ogcb = CT.dom.checkboxAndLabel("ongoing " + ftype);
 		fieldz.description = CT.dom.smartField({
 			isTA: true,
 			classname: "w1",
@@ -137,6 +139,10 @@ coop.needs = {
 				"Description",
 				fieldz.description
 			], "bordered padded margined round"),
+			CT.dom.div([
+				"One Time or Ongoing",
+				ogcb
+			], "bordered padded margined round"),
 			CT.dom.button("submit", function() {
 				for (f in fieldz)
 					data[f] = fieldz[f].fieldValue();
@@ -146,6 +152,7 @@ coop.needs = {
 					data.member = u;
 				else if (!data.phone && !data.email)
 					return alert(cfg.prompts.phone_or_email);
+				data.ongoing = ogcb.isChecked();
 				CT.net.post({
 					path: "/_coop",
 					params: {
