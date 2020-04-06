@@ -63,6 +63,7 @@ This package provides organizational management tools (in the form of web pages 
     		"reflections": {
     			"need": {
     				"reflection": "offering",
+    				"doit": "i'll do it",
     				"button": "need something else?",
     				"closed": "someone is doing it!",
     				"follow": "thanks! we'll follow up :)",
@@ -72,6 +73,7 @@ This package provides organizational management tools (in the form of web pages 
     			},
     			"offering": {
     				"reflection": "need",
+    				"doit": "yes please!",
     				"button": "want to offer something else?",
     				"closed": "that's it!",
     				"follow": "thanks! you're the best!",
