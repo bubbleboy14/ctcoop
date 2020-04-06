@@ -30,7 +30,8 @@ def response():
 			mem = db.get(cgi_get("member"))
 			send_mail(to=mem.email, subject="do this thing", body=task)
 			mem.help_match(need)
-		need.closed = True
-		need.put()
+		if not need.ongoing:
+			need.closed = True
+			need.put()
 
 respond(response)
