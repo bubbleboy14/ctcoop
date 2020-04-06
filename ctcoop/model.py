@@ -7,6 +7,9 @@ from coopTemplates import RESCHED, UPDATE
 class Member(CTUser):
     roles = db.String(repeated=True)
 
+    def help_match(self, need_or_offer):
+        pass
+
 # various ForeignKey()s below (member, sender,
 # recipients, steward, editors) require CTUser,
 # subclass (such as Member), or custom user table
