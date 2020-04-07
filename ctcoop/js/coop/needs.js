@@ -181,11 +181,11 @@ coop.needs = {
 	},
 	init: function(gtype, pnode) {
 		var cfg = core.config.ctcoop.needs,
-			refs = cfg.reflections[gtype],
-			opposite = refs.reflection;
+			refs = cfg.reflections,
+			opposite = refs[gtype].reflection;
 		pnode = pnode || "ctmain";
 		cfg.gal.nobutts || CT.dom.setContent(pnode,
-			CT.dom.button(refs.button, function() {
+			CT.dom.button(refs[opposite].button, function() {
 				coop.needs.form(opposite);
 			}, "abs ctr")
 		);
