@@ -61,6 +61,16 @@ coop.needs = {
 			});
 		});
 	},
+	appender: function(pnode) {
+		return function(item) {
+			var gal = CT.dom.className("cgal", pnode)[0],
+				inode = coop.needs.item(item);
+			if (gal)
+				gal.appendChild(inode);
+			else
+				CT.dom.setContent(pnode, CT.dom.div([inode], "cgal"));
+		};
+	},
 	item: function(n) {
 		var cname = "big bordered padded margined round pointer inline-block";
 		if (n.closed)
@@ -86,9 +96,9 @@ coop.needs = {
 		return dnode;
 	},
 	items: function(needs, gtype, pnode) {
-		CT.dom.addContent(pnode, needs.length ? needs.map(function(n) {
+		CT.dom.addContent(pnode, needs.length ? CT.dom.div(needs.map(function(n) {
 			return coop.needs.item(n);
-		}) : CT.dom.div("no " + gtype + "s :'("));
+		}), "cgal") : CT.dom.div("no " + gtype + "s :'("));
 	},
 	gallery: function(gtype, pnode, items) {
 		var cfg = core.config.ctcoop.needs, gal = function(needs) {
@@ -121,7 +131,7 @@ coop.needs = {
 		} else
 			coop.needs.gallery(gtype, pnode);
 	},
-	form: function(ftype) {
+	form: function(ftype, onsubmit) {
 		var cfg = core.config.ctcoop.needs,
 			reflections = cfg.reflections[ftype],
 			fieldz = {}, f, data = {},
@@ -171,22 +181,23 @@ coop.needs = {
 						action: ftype,
 						data: data
 					},
-					cb: function() {
+					cb: function(item) {
 						alert(reflections.follow);
 						mod.hide();
+						onsubmit && onsubmit(item);
 					}
 				});
 			})
 		]);
 	},
-	init: function(gtype, pnode) {
+	init: function(gtype, pnode, onsubmit) {
 		var cfg = core.config.ctcoop.needs,
 			refs = cfg.reflections,
 			opposite = refs[gtype].reflection;
 		pnode = pnode || "ctmain";
 		cfg.gal.nobutts || CT.dom.setContent(pnode,
 			CT.dom.button(refs[opposite].button, function() {
-				coop.needs.form(opposite);
+				coop.needs.form(opposite, onsubmit);
 			}, "abs ctr")
 		);
 		coop.needs.galleries(gtype, pnode);
