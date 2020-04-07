@@ -28,6 +28,16 @@
 			"items": null,
 			"sets": null
 		},
+		"form": {
+			"need": "need",
+			"offering": "offering",
+			"note": null,
+			"name": "Name",
+			"phone": "Phone",
+			"email": "Email",
+			"address": "Address",
+			"description": "Description"
+		},
 		"blurz": {
 			"phone": ["what's your phone number?", "phone # please"],
 			"email": ["what's your email address?", "email address please"],
@@ -43,7 +53,8 @@
 				"follow": "thanks! we'll follow up :)",
 				"please": "please tell us what you need",
 				"prompt": "Please describe what you need assistance with",
-				"description": ["what do you need help with?", "how can we assist you?"]
+				"description": ["what do you need help with?", "how can we assist you?"],
+				"delconf": "are you really sure? did you post it? no takebacks!"
 			},
 			"offering": {
 				"reflection": "need",
@@ -53,7 +64,8 @@
 				"follow": "thanks! you're the best!",
 				"please": "please describe the resource",
 				"prompt": "Please describe the resource that you would like to offer",
-				"description": ["what would you like to offer?", "please describe your offering"]
+				"description": ["what would you like to offer?", "please describe your offering"],
+				"delconf": "are you really sure? did you post it? no takebacks!"
 			}
 		},
 		"prompts": {
@@ -62,7 +74,8 @@
 			"phone": "please enter your phone number",
 			"email": "please enter your email address",
 			"phone_or_email": "please enter a phone # or email",
-			"form": "please enter your name, as well as your phone # and/or email"
+			"form": "please enter your name, as well as your phone # and/or email",
+			"del": "delete"
 		},
 		"fnames": ["name", "phone", "email", "address"],
 		"carriers": ["at&t", "verizon", "tmobile", "sprint"]
