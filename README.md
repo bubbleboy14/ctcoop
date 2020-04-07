@@ -49,6 +49,8 @@ This package provides organizational management tools (in the form of web pages 
     		"filters": {}
     	},
     	"needs": {
+    		"titled": false,
+    		"openclose": false,
     		"gal": {
     			"nobutts": false,
     			"items": null,
