@@ -224,11 +224,12 @@ coop.needs = {
 	init: function(gtype, pnode) {
 		var cfg = core.config.ctcoop.needs,
 			refs = cfg.reflections,
-			opposite = pnode ? gtype : refs[gtype].reflection;
+			opposite = pnode ? gtype : refs[gtype].reflection,
+			withpnode = !!pnode;
 		pnode = pnode || "ctmain";
 		cfg.gal.nobutts || CT.dom.setContent(pnode,
 			CT.dom.button(refs[opposite].button, function() {
-				coop.needs.form(opposite, coop.needs.appender(pnode));
+				coop.needs.form(opposite, withpnode && coop.needs.appender(pnode));
 			}, "abs ctr")
 		);
 		coop.needs.galleries(gtype, pnode);
