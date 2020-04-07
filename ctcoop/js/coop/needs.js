@@ -83,7 +83,7 @@ coop.needs = {
 			if (gal)
 				gal.appendChild(inode);
 			else
-				CT.dom.setContent(pnode, CT.dom.div([inode], "cgal"));
+				CT.dom.replace(pnode.lastElementChild, CT.dom.div([inode], "cgal"));
 		};
 	},
 	item: function(n) {
@@ -111,6 +111,8 @@ coop.needs = {
 		return dnode;
 	},
 	items: function(needs, gtype, pnode) {
+		if (core.config.ctcoop.needs.titled)
+			CT.dom.addContent(pnode, CT.dom.div(gtype + "s", "biggest"));
 		CT.dom.addContent(pnode, needs.length ? CT.dom.div(needs.map(function(n) {
 			return coop.needs.item(n);
 		}), "cgal") : CT.dom.div("no " + gtype + "s :'("));
