@@ -22,6 +22,7 @@
 	"needs": {
 		"titled": false,
 		"openclose": false,
+		"noongoing": false,
 		"gal": {
 			"nobutts": false,
 			"items": null,
