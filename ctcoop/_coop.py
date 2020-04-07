@@ -4,9 +4,13 @@ from model import db, Need, Offering
 def response():
 	action = cgi_get("action")
 	if action == "need":
-		Need(**cgi_get("data")).put()
+		need = Need(**cgi_get("data"))
+		need.put()
+		succeed(need.data())
 	elif action == "offering":
-		Offering(**cgi_get("data")).put()
+		offering = Offering(**cgi_get("data"))
+		offering.put()
+		succeed(offering.data())
 	elif action == "do":
 		need = db.get(cgi_get("need")) # need or offering....
 		memkey = cgi_get("member", required=False)
