@@ -11,16 +11,16 @@ def response():
 		offering = Offering(**cgi_get("data"))
 		offering.put()
 		succeed(offering.data())
+	elif action == "close":
+		need = db.get(cgi_get("need")) # need or offering....
+		need.closed = True
+		need.put()
 	elif action == "do":
 		need = db.get(cgi_get("need")) # need or offering....
 		memkey = cgi_get("member", required=False)
 		reminder = cgi_get("reminder", required=False)
 		task = [need.description]
 		if need.member:
-			if need.member.urlsafe() == memkey: # same user - close item and abort
-				need.closed = True
-				need.put()
-				succeed()
 			nmem = need.member.get()
 			task.append("name: %s"%(nmem.firstName,))
 			task.append("email: %s"%(nmem.email,))
