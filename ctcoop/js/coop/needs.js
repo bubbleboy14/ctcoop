@@ -1,7 +1,22 @@
 coop.needs = {
+	closer: function(n, cb) {
+		return CT.dom.button("delete this " + n.modelName, function() {
+			if (!confirm("are you really sure? did you post it? no takebacks!"))
+				return;
+			CT.net.post({
+				path: "/_coop",
+				params: {
+					action: "close",
+					need: n.key,
+				},
+				cb: cb
+			});
+		});
+	},
 	button: function(n, cb) {
 		var cfg = core.config.ctcoop.needs, u = user.core.get(),
 			gtype = n.modelName, reflections = cfg.reflections[gtype];
+		if (cfg.openclose) return coop.needs.closer(n, cb);
 		if (n.closed) return reflections.closed;
 		var doit = function(params) {
 			CT.net.post({
@@ -16,9 +31,9 @@ coop.needs = {
 		if (u && u.key == n.member) {
 			return CT.dom.button("close " + gtype, function() {
 				n.ongoing = false;
-				doit(CT.merge(params, {
-					member: u.key
-				}));
+				doit(CT.merge({
+					action: "close"
+				}, params));
 			});
 		}
 		return CT.dom.button(reflections.doit, function() {
