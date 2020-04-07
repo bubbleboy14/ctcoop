@@ -1,15 +1,22 @@
 coop.needs = {
 	closer: function(n, cb) {
-		return CT.dom.button("delete this " + n.modelName, function() {
-			if (!confirm("are you really sure? did you post it? no takebacks!"))
-				return;
-			CT.net.post({
-				path: "/_coop",
-				params: {
-					action: "close",
-					need: n.key,
-				},
-				cb: cb
+		var cfg = core.config.ctcoop.needs,
+			promptz = cfg.prompts,
+			reflections = cfg.reflections[n.modelName];
+		return CT.dom.button(promptz.del, function() {
+			CT.modal.choice({
+				prompt: reflections.delconf,
+				data: ["Don't Delete", "Delete"],
+				cb: function(decision) {
+					(decision == "Delete") && CT.net.post({
+						path: "/_coop",
+						params: {
+							action: "close",
+							need: n.key,
+						},
+						cb: cb
+					});
+				}
 			});
 		});
 	},
@@ -113,7 +120,8 @@ coop.needs = {
 	},
 	items: function(needs, gtype, pnode) {
 		if (core.config.ctcoop.needs.titled)
-			CT.dom.addContent(pnode, CT.dom.div(gtype + "s", "biggest"));
+			CT.dom.addContent(pnode,
+				CT.dom.div(core.config.ctcoop.needs.form[gtype] + "s", "biggest"));
 		CT.dom.addContent(pnode, needs.length ? CT.dom.div(needs.map(function(n) {
 			return coop.needs.item(n);
 		}), "cgal") : CT.dom.div("no " + gtype + "s :'("));
@@ -168,14 +176,15 @@ coop.needs = {
 		});
 		var mod = CT.modal.modal([
 			!u && [
-				cfg.prompts.form,
+				cfg.prompts.form || CT.dom.div("New "
+					+ cfg.form[ftype] + " Post", "bigger"),
 				cfg.fnames.map(function(fname) {
 					fieldz[fname] = CT.dom.smartField({
 						blurs: cfg.blurz[fname],
 						classname: "w1"
 					});
 					return CT.dom.div([
-						CT.parse.capitalize(fname),
+						cfg.form[fname],
 						fieldz[fname]
 					], "bordered padded margined round");
 				})
@@ -186,15 +195,16 @@ coop.needs = {
 				fieldz.description
 			], "bordered padded margined round"),
 			ogfull,
-			CT.dom.button("submit", function() {
+			cfg.form.note,
+			CT.dom.button("Submit", function() {
 				for (f in fieldz)
 					data[f] = fieldz[f].fieldValue();
 				if (!data.description)
-					return alert(reflections.please);
+					return CT.modal.modal(reflections.please);
 				if (u)
 					data.member = u;
 				else if (!data.phone && !data.email)
-					return alert(cfg.prompts.phone_or_email);
+					return CT.modal.modal(cfg.prompts.phone_or_email);
 				data.ongoing = ogcb.isChecked();
 				CT.net.post({
 					path: "/_coop",
@@ -211,14 +221,14 @@ coop.needs = {
 			})
 		]);
 	},
-	init: function(gtype, pnode, onsubmit) {
+	init: function(gtype, pnode) {
 		var cfg = core.config.ctcoop.needs,
 			refs = cfg.reflections,
-			opposite = refs[gtype].reflection;
+			opposite = pnode ? gtype : refs[gtype].reflection;
 		pnode = pnode || "ctmain";
 		cfg.gal.nobutts || CT.dom.setContent(pnode,
 			CT.dom.button(refs[opposite].button, function() {
-				coop.needs.form(opposite, onsubmit);
+				coop.needs.form(opposite, coop.needs.appender(pnode));
 			}, "abs ctr")
 		);
 		coop.needs.galleries(gtype, pnode);
