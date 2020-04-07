@@ -20,6 +20,7 @@
 		"filters": {}
 	},
 	"needs": {
+		"openclose": false,
 		"gal": {
 			"nobutts": false,
 			"items": null,
