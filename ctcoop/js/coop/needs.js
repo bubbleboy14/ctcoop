@@ -87,17 +87,18 @@ coop.needs = {
 		};
 	},
 	item: function(n) {
-		var cname = "big bordered padded margined round pointer inline-block";
+		var cfg = core.config.ctcoop.needs,
+			cname = "big bordered padded margined round pointer inline-block";
 		if (n.closed)
 			cname += " closed";
 		var dnode = CT.dom.div(n.description, cname);
 		dnode.onclick = function() {
 			var details = [];
-			core.config.ctcoop.needs.fnames.forEach(function(key) {
+			cfg.fnames.forEach(function(key) {
 				if (n[key])
 					details.push(key + ": " + n[key]);
 			});
-			details.push("ongoing: " + n.ongoing);
+			cfg.noongoing || details.push("ongoing: " + n.ongoing);
 			var modal = CT.modal.modal([
 				n.description,
 				CT.dom.div(details, "pv10"),
@@ -153,7 +154,13 @@ coop.needs = {
 			reflections = cfg.reflections[ftype],
 			fieldz = {}, f, data = {},
 			u = user.core.get("key"),
-			ogcb = CT.dom.checkboxAndLabel("ongoing " + ftype);
+			ogcb = CT.dom.checkboxAndLabel("ongoing " + ftype),
+			ogfull = CT.dom.div([
+				"One Time or Ongoing",
+				ogcb
+			], "bordered padded margined round");
+		if (cfg.noongoing)
+			ogfull.classList.add("hidden");
 		fieldz.description = CT.dom.smartField({
 			isTA: true,
 			classname: "w1",
@@ -178,10 +185,7 @@ coop.needs = {
 				"Description",
 				fieldz.description
 			], "bordered padded margined round"),
-			CT.dom.div([
-				"One Time or Ongoing",
-				ogcb
-			], "bordered padded margined round"),
+			ogfull,
 			CT.dom.button("submit", function() {
 				for (f in fieldz)
 					data[f] = fieldz[f].fieldValue();
