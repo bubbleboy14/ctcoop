@@ -1,7 +1,7 @@
 from math import ceil
 from cantools import db, config
 from cantools.web import send_mail
-from ctuser.model import CTUser, Conversation
+from ctuser.model import CTUser, Conversation, Tag
 from coopTemplates import RESCHED, UPDATE
 
 class Member(CTUser):
@@ -13,10 +13,6 @@ class Member(CTUser):
 # various ForeignKey()s below (member, sender,
 # recipients, steward, editors) require CTUser,
 # subclass (such as Member), or custom user table
-
-class Tag(db.TimeStampedBase):
-    name = db.String()
-    # helpful especially for providing tagging options
 
 class Contactable(db.TimeStampedBase):
     tags = db.ForeignKey(kind=Tag, repeated=True)
