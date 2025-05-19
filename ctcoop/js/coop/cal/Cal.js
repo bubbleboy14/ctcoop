@@ -79,18 +79,14 @@ coop.cal.Cal = CT.Class({
 					thaz.timeslot(task, variety, new Date(year, month, date));
 				});
 			};
-			CT.modal.prompt({
-				style: "single-choice",
+			CT.modal.choice({
 				data: ["once", "monthly"],
 				cb: function(variety) {
 					if (variety == "once")
 						return slotter(variety);
-					CT.modal.prompt({
-						style: "single-choice",
+					CT.modal.choice({
 						data: ["date", "day"],
-						cb: function(subvar) {
-							slotter(variety + " (" + subvar + ")");
-						}
+						cb: subvar => slotter(variety + " (" + subvar + ")")
 					});
 				}
 			});
@@ -98,8 +94,9 @@ coop.cal.Cal = CT.Class({
 		weekly: function(day, dayindex) {
 			var tslot = this.timeslot, d = new Date();
 			d.setDate(d.getDate() + dayindex - d.getDay());
-			this.task(function(task) {
-				tslot(task, "weekly", d);
+			CT.modal.choice({
+				data: ["weekly", "biweekly (even)", "biweekly (odd)"],
+				cb: variety => this.task(task => tslot(task, variety, d))
 			});
 		},
 		daily: function() {
@@ -120,10 +117,12 @@ coop.cal.Cal = CT.Class({
 			}, buttz = [ vbutt("once") ], eslots;
 			if (slot.schedule == "daily")
 				buttz.push(vbutt("daily"));
-			if (slot.schedule.startsWith("monthly"))
+			if (slot.schedule.startsWith("monthly") || slot.schedule.startsWith("biweekly"))
 				buttz.push(vbutt(slot.schedule));
 			else if (slot.schedule != "once") {
 				buttz.push(vbutt("weekly"));
+				buttz.push(vbutt("biweekly (odd)"));
+				buttz.push(vbutt("biweekly (even)"));
 				if (slots.length) {
 					eslots = this._.eslots(slots[0].task, function(ex) {
 						thaz.cal.uncommit(ex);
@@ -159,7 +158,7 @@ coop.cal.Cal = CT.Class({
 		help: function() {
 			var steps = this.opts.nonew ? [] : [
 				"Click the 'daily task' button to create a new daily task",
-				"Click a day name to set up a weekly task.",
+				"Click a day name to set up a weekly or biweekly task.",
 				"Click a date to set up a monthly or non-recurring task."
 			];
 			steps.push("Click a timeslot to edit or participate.");

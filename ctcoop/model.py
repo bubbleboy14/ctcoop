@@ -52,8 +52,8 @@ class Update(db.TimeStampedBase):
             send_mail(to=recip.email, subject=self.subject, body=bod)
 
 class Timeslot(db.TimeStampedBase):
-    schedule = db.String(choices=["once", "weekly", "daily", "exception",
-        "offday", "monthly (date)", "monthly (day)"])
+    schedule = db.String(choices=["once", "daily", "weekly", "exception", "offday",
+        "biweekly (even)", "biweekly (odd)", "monthly (date)", "monthly (day)"])
     when = db.DateTime()
     duration = db.Float() # hours
 
@@ -110,14 +110,22 @@ def isDay(slot, now):
     when = slot.when
     if sched == "daily":
         return True
-    elif sched == "weekly" or sched == "offday":
-        return when.weekday() == now.weekday()
-    elif sched == "once" or sched == "exception":
+    if sched == "once" or sched == "exception":
         return when.date() == now.date()
-    elif sched == "monthly (date)":
+    if sched == "monthly (date)":
         return when.day == now.day
-    elif sched == "monthly (day)":
-        return when.weekday() == now.weekday() and ceil(when.day / 7.0) == ceil(now.day / 7.0)
+    if when.weekday() != now.weekday():
+        return
+    if sched == "weekly" or sched == "offday":
+        return True
+    thisweek = ceil(now.day / 7.0)
+    if sched == "biweekly (odd)":
+        return thisweek % 2
+    if sched == "biweekly (even)":
+        return not thisweek % 2
+    if sched == "monthly (day)":
+        tarweek = ceil(when.day / 7.0)
+        return tarweek == thisweek
 
 class Task(db.TimeStampedBase):
     editors = db.ForeignKey(repeated=True)
