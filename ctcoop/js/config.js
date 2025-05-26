@@ -5,7 +5,6 @@
 		"subject": "",
 		"on": {}
 	},
-	"cal": {},
 	"about": {
 		"members": {
 			"header": "Members",
