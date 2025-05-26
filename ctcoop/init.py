@@ -15,4 +15,4 @@ model = {
 routes = {
 	"/_coop": "_coop.py"
 }
-requires = ["ctdecide"]
+requires = ["ctdecide", "ctcal"]
